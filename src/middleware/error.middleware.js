@@ -1,14 +1,15 @@
 import Joi from 'joi'
 import express from 'express'
-import ErrorResponse from '../responses/error.response.js'
+import ErrorMsg from '../errors/message.error.js'
+import errorResponse from '../responses/error.response.js'
 
 /**
- * 
- * @param {Joi.ValidationError|ErrorResponse|Error} err 
- * @param {express.Request} req 
- * @param {express.Response} res 
- * @param {express.NextFunction} next 
- * @returns 
+ *
+ * @param {Joi.ValidationError|ErrorMsg|Error} err
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ * @returns
  */
 const errorMiddleware = async (err, req, res, next) => {
   if (!err) {
@@ -17,33 +18,22 @@ const errorMiddleware = async (err, req, res, next) => {
   }
 
   if (err instanceof Joi.ValidationError) {
-    res
-      .status(422)
-      .json({
-        message: 'Unprocessable Entities',
-        errors: err.details.map((detail) => {
-          return {
-            name: detail.context.label,
-            message: detail.message?.replaceAll('"', ''),
-          }
-        }),
-      })
-      .end()
-  } else if (err instanceof ErrorResponse) {
-    res
-      .status(err.status)
-      .json({
-        message: err.message,
-      })
-      .end()
+    return errorResponse(
+      res,
+      err.details.map((detail) => {
+        return {
+          name: detail.context.label,
+          message: detail.message?.replaceAll('"', ''),
+        }
+      }),
+      'Unprocessable Entities',
+      422
+    )
+  } else if (err instanceof ErrorMsg) {
+    return errorResponse(res, null, err.message, err.status)
   } else {
     console.error(err)
-    res
-      .status(500)
-      .json({
-        message: err.message,
-      })
-      .end()
+    return errorResponse(res, null, err.message, 500)
   }
 }
 
