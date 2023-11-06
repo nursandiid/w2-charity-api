@@ -74,7 +74,7 @@ const get = async (id) => {
   })
 
   if (!category) {
-    throw new ErrorMsg(404, 'Category is not found')
+    throw new ErrorMsg(404, 'Category not found')
   }
 
   return category
@@ -88,7 +88,7 @@ const update = async (attributes, id) => {
   })
 
   if (!category) {
-    throw new ErrorMsg(404, 'Category is not found')
+    throw new ErrorMsg(404, 'Category not found')
   }
 
   category = await prisma.categories.update({
@@ -112,7 +112,7 @@ const remove = async (id) => {
   })
 
   if (!category) {
-    throw new ErrorMsg(404, 'Category is not found')
+    throw new ErrorMsg(404, 'Category not found')
   }
 
   await prisma.categories.delete({

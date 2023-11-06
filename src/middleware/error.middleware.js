@@ -8,15 +8,10 @@ import errorResponse from '../responses/error.response.js'
  * @param {Joi.ValidationError|ErrorMsg|Error} err
  * @param {express.Request} req
  * @param {express.Response} res
- * @param {express.NextFunction} next
+ * 
  * @returns
  */
 const errorMiddleware = async (err, req, res, next) => {
-  if (!err) {
-    next()
-    return
-  }
-
   if (err instanceof Joi.ValidationError) {
     return errorResponse(
       res,
@@ -31,10 +26,13 @@ const errorMiddleware = async (err, req, res, next) => {
     )
   } else if (err instanceof ErrorMsg) {
     return errorResponse(res, null, err.message, err.status)
-  } else {
-    // console.error(err)
+  } else if (err) {
+    console.error(err)
+    
     return errorResponse(res, null, err.message, 500)
   }
+
+  next()
 }
 
 export default errorMiddleware

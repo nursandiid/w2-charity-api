@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import errorMiddleware from '../middleware/error.middleware.js'
+import notFoundMiddleware from '../middleware/not-found.middleware.js'
 import categoryRouter from '../routes/category.js'
 
 const app = express()
@@ -18,5 +19,6 @@ app.get('/', (req, res) => {
 app.use('/api/categories', categoryRouter)
 
 app.use(errorMiddleware)
+app.use(notFoundMiddleware)
 
 export default app
