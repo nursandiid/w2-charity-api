@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import web from '../../src/applications/web.js'
 
-describe('GET /', () => {
+describe('GET / - endpoint', () => {
   it('should can access the welcome page', async () => {
     const result = await supertest(web).get('/')
 

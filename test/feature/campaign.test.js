@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import web from '../../src/applications/web.js'
 
-describe('POST /api/campaign', () => {
+describe('POST /api/campaign - endpoint', () => {
   it.skip('should can upload image with valid extension', async () => {
     const result = await supertest(web)
       .post('/api/campaign')

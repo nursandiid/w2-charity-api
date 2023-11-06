@@ -8,7 +8,7 @@ import {
   removeTestCategory,
 } from '../utils/category.util.js'
 
-describe('GET /api/categories', () => {
+describe('GET /api/categories - endpoint', () => {
   beforeEach(async () => {
     await removeAllTestCategories()
     await createDummyTestCategories()
@@ -33,7 +33,7 @@ describe('GET /api/categories', () => {
   })
 })
 
-describe('POST /api/categories', () => {
+describe('POST /api/categories - endpoint', () => {
   beforeEach(async () => {
     await removeTestCategory()
   })
@@ -60,7 +60,7 @@ describe('POST /api/categories', () => {
   })
 })
 
-describe('GET /api/categories/:id', () => {
+describe('GET /api/categories/:id - endpoint', () => {
   beforeEach(async () => {
     await removeTestCategory()
     await createTestCategory()
@@ -88,7 +88,7 @@ describe('GET /api/categories/:id', () => {
   })
 })
 
-describe('PUT /api/categories/:id', () => {
+describe('PUT /api/categories/:id - endpoint', () => {
   beforeEach(async () => {
     await removeTestCategory()
     await createTestCategory()
@@ -111,7 +111,7 @@ describe('PUT /api/categories/:id', () => {
   })
 })
 
-describe('DELETE /api/categories/:id', () => {
+describe('DELETE /api/categories/:id - endpoint', () => {
   beforeEach(async () => {
     await removeTestCategory()
     await createTestCategory()

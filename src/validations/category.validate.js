@@ -12,8 +12,8 @@ const getValidation = Joi.number()
 
 const queryFiltersValidation = Joi.object({
   keyword: Joi.string().optional().allow(''),
-  rows: Joi.number().optional().allow(''),
-  paginate: Joi.number().optional().allow(''),
+  size: Joi.number().optional().allow(''),
+  page: Joi.number().optional().allow(''),
   sort_by: Joi.string().valid('name').optional().allow(''),
   sort_value: Joi.string().valid('asc', 'desc').optional().allow(''),
 })
