@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import errorMiddleware from '../middleware/error.middleware.js'
+import categoryRouter from '../routes/category.js'
 
 const app = express()
 
@@ -14,6 +15,7 @@ dotenv.config()
 app.get('/', (req, res) => {
   res.send(`Hi, it's working`)
 })
+app.use('/api/categories', categoryRouter)
 
 app.use(errorMiddleware)
 

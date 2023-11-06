@@ -8,25 +8,25 @@ datasource db {
 }
 
 model bank {
-  id           BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  id           Int            @id @default(autoincrement())
   code         String         @unique(map: "bank_code_unique") @db.VarChar(255)
   name         String         @db.VarChar(255)
   path_image   String         @db.VarChar(255)
-  created_at   DateTime?      @db.Timestamp(0)
-  updated_at   DateTime?      @db.Timestamp(0)
+  created_at   DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?      @updatedAt @db.Timestamp(0)
   bank_setting bank_setting[]
   bank_user    bank_user[]
   cashouts     cashouts[]
 }
 
 model bank_setting {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  bank_id    BigInt    @db.UnsignedBigInt
-  setting_id BigInt    @db.UnsignedBigInt
+  id         Int       @id @default(autoincrement())
+  bank_id    Int
+  setting_id Int
   account    String    @db.VarChar(255)
   name       String    @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
   is_main    Boolean   @default(false)
   bank       bank      @relation(fields: [bank_id], references: [id], onDelete: Cascade, map: "bank_setting_bank_id_foreign")
   settings   settings  @relation(fields: [setting_id], references: [id], onDelete: Cascade, map: "bank_setting_setting_id_foreign")
@@ -36,13 +36,13 @@ model bank_setting {
 }
 
 model bank_user {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  bank_id    BigInt    @db.UnsignedBigInt
-  user_id    BigInt    @db.UnsignedBigInt
+  id         Int       @id @default(autoincrement())
+  bank_id    Int
+  user_id    Int
   account    String    @db.VarChar(255)
   name       String    @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
   is_main    Boolean   @default(false)
   bank       bank      @relation(fields: [bank_id], references: [id], onDelete: Cascade, map: "bank_user_bank_id_foreign")
   users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "bank_user_user_id_foreign")
@@ -52,8 +52,8 @@ model bank_user {
 }
 
 model campaigns {
-  id                BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
-  user_id           BigInt              @db.UnsignedBigInt
+  id                Int                 @id @default(autoincrement())
+  user_id           Int
   title             String              @db.VarChar(255)
   slug              String              @unique(map: "campaigns_slug_unique") @db.VarChar(255)
   short_description String?             @db.VarChar(255)
@@ -65,8 +65,8 @@ model campaigns {
   end_date          DateTime?           @db.DateTime(0)
   note              String?             @db.Text
   receiver          String?             @db.VarChar(255)
-  created_at        DateTime?           @db.Timestamp(0)
-  updated_at        DateTime?           @db.Timestamp(0)
+  created_at        DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?           @updatedAt @db.Timestamp(0)
   path_image        String?             @db.VarChar(255)
   publish_date      DateTime?           @db.DateTime(0)
   users             users               @relation(fields: [user_id], references: [id], map: "campaigns_user_id_foreign")
@@ -78,18 +78,18 @@ model campaigns {
 }
 
 model cashouts {
-  id               BigInt          @id @default(autoincrement()) @db.UnsignedBigInt
-  campaign_id      BigInt          @db.UnsignedBigInt
-  user_id          BigInt          @db.UnsignedBigInt
+  id               Int             @id @default(autoincrement())
+  campaign_id      Int
+  user_id          Int
   cashout_amount   Float
   cashout_fee      Float
   amount_received  Float
   remaining_amount Float
-  bank_id          BigInt          @db.UnsignedBigInt
+  bank_id          Int
   status           cashouts_status
   reason_rejected  String?         @db.VarChar(255)
-  created_at       DateTime?       @db.Timestamp(0)
-  updated_at       DateTime?       @db.Timestamp(0)
+  created_at       DateTime?       @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?       @updatedAt @db.Timestamp(0)
   bank             bank            @relation(fields: [bank_id], references: [id], onUpdate: Restrict, map: "cashouts_bank_id_foreign")
   campaigns        campaigns       @relation(fields: [campaign_id], references: [id], onUpdate: Restrict, map: "cashouts_campaign_id_foreign")
   users            users           @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "cashouts_user_id_foreign")
@@ -100,20 +100,20 @@ model cashouts {
 }
 
 model categories {
-  id                BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  id                Int                 @id @default(autoincrement())
   name              String              @db.VarChar(255)
   slug              String              @unique(map: "categories_slug_unique") @db.VarChar(255)
-  created_at        DateTime?           @db.Timestamp(0)
-  updated_at        DateTime?           @db.Timestamp(0)
+  created_at        DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?           @updatedAt @db.Timestamp(0)
   category_campaign category_campaign[]
 }
 
 model category_campaign {
-  id          BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
-  category_id BigInt     @db.UnsignedBigInt
-  campaign_id BigInt     @db.UnsignedBigInt
-  created_at  DateTime?  @db.Timestamp(0)
-  updated_at  DateTime?  @db.Timestamp(0)
+  id          Int        @id @default(autoincrement())
+  category_id Int
+  campaign_id Int
+  created_at  DateTime?  @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?  @updatedAt @db.Timestamp(0)
   campaigns   campaigns  @relation(fields: [campaign_id], references: [id], onDelete: Cascade, map: "category_campaign_campaign_id_foreign")
   categories  categories @relation(fields: [category_id], references: [id], map: "category_campaign_category_id_foreign")
 
@@ -122,27 +122,27 @@ model category_campaign {
 }
 
 model contacts {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(255)
   phone      String    @db.VarChar(255)
   email      String    @db.VarChar(255)
   subject    String    @db.VarChar(255)
   message    String    @db.Text
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
 }
 
 model donations {
-  id           BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
-  campaign_id  BigInt            @db.UnsignedBigInt
-  user_id      BigInt            @db.UnsignedBigInt
+  id           Int               @id @default(autoincrement())
+  campaign_id  Int
+  user_id      Int
   order_number String            @unique @db.VarChar(255)
   anonim       Boolean           @default(false)
   nominal      Int
   support      String?           @db.Text
   status       donations_status?
-  created_at   DateTime?         @db.Timestamp(0)
-  updated_at   DateTime?         @db.Timestamp(0)
+  created_at   DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?         @updatedAt @db.Timestamp(0)
   campaigns    campaigns         @relation(fields: [campaign_id], references: [id], map: "donations_campaign_id_foreign")
   users        users             @relation(fields: [user_id], references: [id], map: "donations_user_id_foreign")
   payments     payments[]
@@ -153,7 +153,7 @@ model donations {
 }
 
 model failed_jobs {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int      @id @default(autoincrement())
   uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
   connection String   @db.Text
   queue      String   @db.Text
@@ -166,22 +166,22 @@ model password_resets {
   id         Int       @id @default(autoincrement())
   email      String    @db.VarChar(255)
   token      String    @unique @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
 
   @@index([email], map: "password_resets_email_index")
 }
 
 model payments {
-  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  user_id      BigInt    @db.UnsignedBigInt
+  id           Int       @id @default(autoincrement())
+  user_id      Int
   name         String    @db.VarChar(255)
   order_number String    @db.VarChar(255)
   nominal      Int
-  bank_id      BigInt    @db.UnsignedBigInt
+  bank_id      Int
   note         String?   @db.Text
   path_image   String?   @db.VarChar(255)
-  created_at   DateTime? @db.Timestamp(0)
-  updated_at   DateTime? @db.Timestamp(0)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @updatedAt @db.Timestamp(0)
   donations    donations @relation(fields: [order_number], references: [order_number], onDelete: Cascade, map: "payments_order_number_foreign")
   users        users     @relation(fields: [user_id], references: [id], map: "payments_user_id_foreign")
 
@@ -190,30 +190,30 @@ model payments {
 }
 
 model personal_access_tokens {
-  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id             Int       @id @default(autoincrement())
   tokenable_type String    @db.VarChar(255)
-  tokenable_id   BigInt    @db.UnsignedBigInt
+  tokenable_id   Int
   name           String    @db.VarChar(255)
   token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
   abilities      String?   @db.Text
   last_used_at   DateTime? @db.Timestamp(0)
-  created_at     DateTime? @db.Timestamp(0)
-  updated_at     DateTime? @db.Timestamp(0)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @updatedAt @db.Timestamp(0)
 
   @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
 }
 
 model roles {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
   users      users[]
 }
 
 model sessions {
   id            String  @id @db.VarChar(255)
-  user_id       BigInt? @db.UnsignedBigInt
+  user_id       Int?
   ip_address    String? @db.VarChar(45)
   user_agent    String? @db.Text
   payload       String  @db.Text
@@ -224,7 +224,7 @@ model sessions {
 }
 
 model settings {
-  id                BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  id                Int            @id @default(autoincrement())
   owner_name        String         @db.VarChar(255)
   email             String         @unique(map: "settings_email_unique") @db.VarChar(255)
   phone             String         @db.VarChar(255)
@@ -236,8 +236,8 @@ model settings {
   path_image        String?        @db.VarChar(255)
   path_image_header String?        @db.VarChar(255)
   path_image_footer String?        @db.VarChar(255)
-  created_at        DateTime?      @db.Timestamp(0)
-  updated_at        DateTime?      @db.Timestamp(0)
+  created_at        DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?      @updatedAt @db.Timestamp(0)
   company_name      String         @db.VarChar(255)
   short_description String         @db.VarChar(255)
   keyword           String         @db.VarChar(255)
@@ -250,14 +250,14 @@ model settings {
 }
 
 model subscribers {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id         Int       @id @default(autoincrement())
   email      String    @unique(map: "subscibers_email_unique") @db.VarChar(255)
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
 }
 
 model users {
-  id                        BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  id                        Int           @id @default(autoincrement())
   name                      String        @db.VarChar(255)
   email                     String        @unique(map: "users_email_unique") @db.VarChar(255)
   email_verified_at         DateTime?     @db.Timestamp(0)
@@ -265,7 +265,7 @@ model users {
   two_factor_secret         String?       @db.Text
   two_factor_recovery_codes String?       @db.Text
   remember_token            String?       @db.VarChar(100)
-  current_team_id           BigInt?       @db.UnsignedBigInt
+  current_team_id           Int?
   phone                     String?       @db.VarChar(255)
   gender                    users_gender?
   birth_date                DateTime?     @db.Date
@@ -273,9 +273,9 @@ model users {
   address                   String?       @db.Text
   about                     String?       @db.Text
   path_image                String?       @db.VarChar(255)
-  role_id                   BigInt        @db.UnsignedBigInt
-  created_at                DateTime?     @db.Timestamp(0)
-  updated_at                DateTime?     @db.Timestamp(0)
+  role_id                   Int
+  created_at                DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at                DateTime?     @updatedAt @db.Timestamp(0)
   bank_user                 bank_user[]
   campaigns                 campaigns[]
   cashouts                  cashouts[]

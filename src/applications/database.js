@@ -39,3 +39,5 @@ prisma.$on('info', (e) => {
 prisma.$on('query', (e) => {
   logger.info(e)
 })
+
+export default prisma

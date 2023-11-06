@@ -32,7 +32,7 @@ const errorMiddleware = async (err, req, res, next) => {
   } else if (err instanceof ErrorMsg) {
     return errorResponse(res, null, err.message, err.status)
   } else {
-    console.error(err)
+    // console.error(err)
     return errorResponse(res, null, err.message, 500)
   }
 }

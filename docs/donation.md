@@ -10,8 +10,8 @@ Query Params :
 ```json
 {
     "keyword": "",
-    "rows": "",
-    "paginate": "",
+    "size": "",
+    "page": "",
     "sort_by": "",
     "sort_value": "",
     "status": "",
