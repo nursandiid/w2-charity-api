@@ -121,7 +121,7 @@ describe('DELETE /api/categories/:id - endpoint', () => {
     await removeAllTestCategories()
   })
 
-  it('should be able to update selected category', async () => {
+  it('should be able to delete selected category', async () => {
     const category = await getTestCategory()
     const result = await supertest(web).delete('/api/categories/' + category.id)
 

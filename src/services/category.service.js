@@ -3,6 +3,11 @@ import prisma from '../applications/database.js'
 import ErrorMsg from '../errors/message.error.js'
 import { paginate, paginateLink } from '../utils/helpers.js'
 
+/**
+ * 
+ * @param {*} attributes 
+ * @returns {array|object}
+ */
 const getAll = async (attributes) => {
   const { size, page, skip } = paginate(attributes)
   let filters = []
@@ -29,6 +34,15 @@ const getAll = async (attributes) => {
     skip,
     take: size,
     orderBy,
+    include: {
+      category_campaign: {
+        select: {
+          id: true,
+          category_id: true,
+          campaign_id: true,
+        },
+      },
+    },
   })
 
   const totalCategories = await prisma.categories.count({
@@ -45,6 +59,11 @@ const getAll = async (attributes) => {
   })
 }
 
+/**
+ * 
+ * @param {*} attributes 
+ * @returns {object}
+ */
 const create = async (attributes) => {
   let category = await prisma.categories.count({
     where: {
@@ -66,10 +85,24 @@ const create = async (attributes) => {
   return category
 }
 
+/**
+ * 
+ * @param {number} id 
+ * @returns {object}
+ */
 const get = async (id) => {
   let category = await prisma.categories.findFirst({
     where: {
       id,
+    },
+    include: {
+      category_campaign: {
+        select: {
+          id: true,
+          category_id: true,
+          campaign_id: true,
+        },
+      },
     },
   })
 
@@ -80,10 +113,25 @@ const get = async (id) => {
   return category
 }
 
+/**
+ * 
+ * @param {*} attributes 
+ * @param {number} id 
+ * @returns {object}
+ */
 const update = async (attributes, id) => {
   let category = await prisma.categories.findFirst({
     where: {
       id,
+    },
+    include: {
+      category_campaign: {
+        select: {
+          id: true,
+          category_id: true,
+          campaign_id: true,
+        },
+      },
     },
   })
 
@@ -104,6 +152,11 @@ const update = async (attributes, id) => {
   return category
 }
 
+/**
+ * 
+ * @param {number} id 
+ * @returns {null}
+ */
 const remove = async (id) => {
   let category = await prisma.categories.findFirst({
     where: {
