@@ -35,14 +35,24 @@ Request Body :
 {
     "name": "Nursandi",
     "email": "nursandi@example.com",
-    "password": "",
     "phone": "",
     "gender": "",
     "birth_date": "",
     "job": "",
     "address": "",
     "about": "",
-    "path_image": "",
-    "role_id": 1
+    "path_image": ""
+}
+```
+
+## Update Password
+Endpoint : PATCH /api/auth/password
+
+Request Body :
+```json
+{
+    "current_password": "",
+    "password": "",
+    "password_confirmation": "",
 }
 ```

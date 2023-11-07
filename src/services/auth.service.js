@@ -49,10 +49,8 @@ const login = async (attributes) => {
     },
   })
 
-  const passwordIsValid = await bcrypt.compare(
-    attributes.password,
-    user.password || ''
-  )
+  const passwordIsValid =
+    user.password && (await bcrypt.compare(attributes.password, user.password))
 
   if (!user || !passwordIsValid) {
     throw new ErrorMsg(401, 'Email or password is wrong')
@@ -80,6 +78,10 @@ const get = async (id) => {
     },
   })
 
+  if (!user) {
+    throw new ErrorMsg(404, 'User is not found')
+  }
+
   return user
 }
 
@@ -90,7 +92,24 @@ const get = async (id) => {
  * @returns {object}
  */
 const updateProfile = async (attributes, id) => {
-  //
+  let user = await prisma.users.findFirst({
+    where: {
+      id,
+    },
+  })
+
+  if (!user) {
+    throw new ErrorMsg(404, 'User is not found')
+  }
+
+  user = await prisma.users.update({
+    where: {
+      id,
+    },
+    data: attributes,
+  })
+
+  return user
 }
 
 /**
@@ -100,7 +119,35 @@ const updateProfile = async (attributes, id) => {
  * @returns {object}
  */
 const updatePassword = async (attributes, id) => {
-  //
+  let user = await prisma.users.findFirst({
+    where: {
+      id,
+    },
+  })
+
+  if (!user) {
+    throw new ErrorMsg(404, 'User is not found')
+  }
+
+  const checkCurrentPassword = await bcrypt.compare(
+    attributes.current_password,
+    user.password
+  )
+
+  if (!checkCurrentPassword) {
+    throw new ErrorMsg(400, 'Current password does not match')
+  }
+
+  user = await prisma.users.update({
+    where: {
+      id,
+    },
+    data: {
+      password: await bcrypt.hash(attributes.password, 10),
+    },
+  })
+
+  return user
 }
 
 export { get as getAuth }

@@ -37,3 +37,20 @@ export const paginateLink = (attributes) => {
     total: total,
   }
 }
+
+/**
+ *
+ * @param {*} file
+ * @returns
+ */
+export const getFileUploadAttributes = (file) => {
+  if (!file) {
+    return
+  }
+
+  return {
+    size: file.size,
+    extension: file.originalname.split('.').pop(),
+    mimetype: file.mimetype,
+  }
+}

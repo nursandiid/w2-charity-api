@@ -36,7 +36,7 @@ describe('POST /api/auth/register - endpoint', () => {
     expect(result.body.errors).toBeDefined()
   })
 
-  it("should fail to register a user with if the password doesn't match", async () => {
+  it('should fail to register a user with if the password does not match', async () => {
     const result = await supertest(web).post('/api/auth/register').send({
       name: 'Nursandi',
       email: 'nursandi@example.com',
@@ -129,28 +129,73 @@ describe('GET /api/auth/current - endpoint', () => {
 
 describe('PUT /api/auth/current - endpoint', () => {
   beforeEach(async () => {
-    //
+    await removeTestUser()
+    await createTestUser()
   })
 
   afterEach(async () => {
-    //
+    await removeTestUser()
   })
 
   it('should be able to update current profile', async () => {
-    //
+    const user = await getTestUser()
+    const result = await supertest(web)
+      .put('/api/auth/current')
+      .set('Authorization', 'Bearer ' + user.access_token)
+      .field({
+        name: 'Nursandi updated',
+        email: 'nursandi@example.com',
+        phone: '',
+        gender: 'laki_laki',
+        birth_date: '2020-01-01',
+        job: '',
+        address: '',
+        about: '',
+      })
+      .attach('path_image', process.cwd() + '/test/file-test/1.png')
+
+    expect(result.status).toBe(200)
+    expect(result.body.data.name).toBe('Nursandi updated')
+    expect(result.body.message).toBe('Updated')
   })
 })
 
 describe('PATCH /api/auth/password - endpoint', () => {
   beforeEach(async () => {
-    //
+    await removeTestUser()
+    await createTestUser()
   })
 
   afterEach(async () => {
-    //
+    await removeTestUser()
   })
 
-  it('should be able to update current password', async () => {
-    //
+  it('should be able to update password with valid current password and match password confirmation', async () => {
+    const user = await getTestUser()
+    const result = await supertest(web)
+      .patch('/api/auth/password')
+      .set('Authorization', 'Bearer ' + user.access_token)
+      .send({
+        current_password: '123456',
+        password: 'admin123',
+        password_confirmation: 'admin123',
+      })
+
+    expect(result.status).toBe(200)
+    expect(result.body.message).toBe('Updated')
+  })
+
+  it('should fail to update password with invalid current password', async () => {
+    const user = await getTestUser()
+    const result = await supertest(web)
+      .patch('/api/auth/password')
+      .set('Authorization', 'Bearer ' + user.access_token)
+      .send({
+        current_password: 'SALAH',
+        password: 'admin123',
+        password_confirmation: 'admin123',
+      })
+
+    expect(result.status).toBe(400)
   })
 })

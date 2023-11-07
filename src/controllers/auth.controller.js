@@ -1,11 +1,15 @@
 import express from 'express'
+import fs from 'fs'
 import validate from '../validations/validation.js'
 import authService from '../services/auth.service.js'
 import {
   authRegisterValidation,
   authLoginValidation,
+  authUpdateProfileValidation,
+  authUpdatePasswordValidation,
 } from '../validations/auth.validate.js'
 import successResponse from '../responses/success.response.js'
+import { getFileUploadAttributes } from '../utils/helpers.js'
 
 /**
  *
@@ -63,8 +67,34 @@ const get = async (req, res, next) => {
  */
 const updateProfile = async (req, res, next) => {
   try {
-    //
+    const attributes = validate(authUpdateProfileValidation, {
+      ...req.body,
+      path_image: getFileUploadAttributes(req.file),
+    })
+    const user = req.user
+
+    if (req.file?.path) {
+      attributes.path_image = req.file.path
+    } else {
+      delete attributes.path_image
+    }
+
+    if (attributes.birth_date) {
+      attributes.birth_date = new Date(attributes.birth_date)
+    }
+
+    const result = await authService.updateProfile(attributes, user.id)
+
+    if (attributes.path_image && fs.existsSync(user.path_image)) {
+      fs.unlinkSync(user.path_image)
+    }
+
+    return successResponse(res, result, 'Updated')
   } catch (error) {
+    if (fs.existsSync(req.file?.path)) {
+      fs.unlinkSync(req.file?.path)
+    }
+
     next(error)
   }
 }
@@ -77,7 +107,10 @@ const updateProfile = async (req, res, next) => {
  */
 const updatePassword = async (req, res, next) => {
   try {
-    //
+    const attributes = validate(authUpdatePasswordValidation, req.body)
+    const result = await authService.updatePassword(attributes, req.user.id)
+
+    return successResponse(res, result, 'Updated')
   } catch (error) {
     next(error)
   }
