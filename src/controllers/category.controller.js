@@ -1,6 +1,11 @@
 import express from 'express'
 import validate from '../validations/validation.js'
-import categoryValidate from '../validations/category.validate.js'
+import {
+  categoryCreateValidation,
+  categoryUpdateValidation,
+  categoryIdValidation,
+  queryFiltersValidation,
+} from '../validations/category.validate.js'
 import categoryService from '../services/category.service.js'
 import successResponse from '../responses/success.response.js'
 
@@ -12,12 +17,12 @@ import successResponse from '../responses/success.response.js'
  */
 const getAll = async (req, res, next) => {
   try {
-    const validated = validate(
-      categoryValidate.queryFiltersValidation,
+    const attributes = validate(
+      queryFiltersValidation,
       req.query,
       true
     )
-    const result = await categoryService.getAll(validated)
+    const result = await categoryService.getAll(attributes)
 
     return successResponse(res, result)
   } catch (error) {
@@ -33,8 +38,8 @@ const getAll = async (req, res, next) => {
  */
 const create = async (req, res, next) => {
   try {
-    const validated = validate(categoryValidate.createValidation, req.body)
-    const result = await categoryService.create(validated)
+    const attributes = validate(categoryCreateValidation, req.body)
+    const result = await categoryService.create(attributes)
 
     return successResponse(res, result, 'Created', 201)
   } catch (error) {
@@ -50,7 +55,7 @@ const create = async (req, res, next) => {
  */
 const get = async (req, res, next) => {
   try {
-    const id = validate(categoryValidate.getValidation, req.params.id)
+    const id = validate(categoryIdValidation, req.params.id)
     const result = await categoryService.get(id)
 
     return successResponse(res, result)
@@ -67,9 +72,9 @@ const get = async (req, res, next) => {
  */
 const update = async (req, res, next) => {
   try {
-    const validated = validate(categoryValidate.updateValidation, req.body)
-    const id = validate(categoryValidate.getValidation, req.params.id)
-    const result = await categoryService.update(validated, id)
+    const attributes = validate(categoryUpdateValidation, req.body)
+    const id = validate(categoryIdValidation, req.params.id)
+    const result = await categoryService.update(attributes, id)
 
     return successResponse(res, result, 'Updated', 200)
   } catch (error) {
@@ -85,7 +90,7 @@ const update = async (req, res, next) => {
  */
 const remove = async (req, res, next) => {
   try {
-    const id = validate(categoryValidate.getValidation, req.params.id)
+    const id = validate(categoryIdValidation, req.params.id)
     const result = await categoryService.remove(id)
 
     return successResponse(res, result, 'Deleted', 204)

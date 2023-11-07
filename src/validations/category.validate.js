@@ -1,14 +1,14 @@
 import Joi from 'joi'
 
-const createValidation = Joi.object({
+const categoryCreateValidation = Joi.object({
   name: Joi.string().required(),
 })
 
-const updateValidation = Joi.object({
+const categoryUpdateValidation = Joi.object({
   name: Joi.string().required(),
 })
 
-const getValidation = Joi.number()
+const categoryIdValidation = Joi.number()
 
 const queryFiltersValidation = Joi.object({
   keyword: Joi.string().optional().allow(''),
@@ -18,9 +18,9 @@ const queryFiltersValidation = Joi.object({
   sort_value: Joi.string().valid('asc', 'desc').optional().allow(''),
 })
 
-export default {
-  createValidation,
-  updateValidation,
-  getValidation,
+export {
+  categoryCreateValidation,
+  categoryUpdateValidation,
+  categoryIdValidation,
   queryFiltersValidation,
 }
