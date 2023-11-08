@@ -9,13 +9,13 @@ const authRegisterValidation = Joi.object({
     .min(6)
     .valid(Joi.ref('password'))
     .messages({
-      'any.only': 'password_confirmation does not match',
-    }),
+      'any.only': 'password_confirmation does not match'
+    })
 })
 
 const authLoginValidation = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.string().required(),
+  password: Joi.string().required()
 })
 
 const authUpdateProfileValidation = Joi.object({
@@ -27,7 +27,7 @@ const authUpdateProfileValidation = Joi.object({
     .optional()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .messages({
-      'string.pattern.base': 'birth_date format is not valid',
+      'string.pattern.base': 'birth_date format is invalid'
     }),
   job: Joi.string().optional(),
   address: Joi.string().optional(),
@@ -35,8 +35,8 @@ const authUpdateProfileValidation = Joi.object({
   path_image: Joi.object({
     size: Joi.number().max(2_048_000),
     extension: Joi.string().valid('png', 'jpg', 'jpeg'),
-    mimetype: Joi.string().regex(/^image\//),
-  }).optional(),
+    mimetype: Joi.string().regex(/^image\//)
+  }).optional()
 })
 
 const authUpdatePasswordValidation = Joi.object({
@@ -47,13 +47,13 @@ const authUpdatePasswordValidation = Joi.object({
     .min(6)
     .valid(Joi.ref('password'))
     .messages({
-      'any.only': 'password_confirmation does not match',
-    }),
+      'any.only': 'password_confirmation does not match'
+    })
 })
 
 export {
   authRegisterValidation,
   authLoginValidation,
   authUpdateProfileValidation,
-  authUpdatePasswordValidation,
+  authUpdatePasswordValidation
 }

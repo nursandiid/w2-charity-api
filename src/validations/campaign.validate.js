@@ -11,7 +11,7 @@ const fields = {
     .optional()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .messages({
-      'string.pattern.base': 'end_date format is not valid',
+      'string.pattern.base': 'end_date format is invalid'
     }),
   note: Joi.string().optional(),
   receiver: Joi.string()
@@ -26,17 +26,17 @@ const fields = {
     .optional()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .messages({
-      'string.pattern.base': 'publish_date format is not valid',
+      'string.pattern.base': 'publish_date format is invalid'
     }),
   path_image: Joi.object({
     size: Joi.number().max(2_048_000),
     extension: Joi.string().valid('png', 'jpg', 'jpeg'),
-    mimetype: Joi.string().regex(/^image\//),
-  }).required(),
+    mimetype: Joi.string().regex(/^image\//)
+  }).required()
 }
 
 const campaignCreateValidation = Joi.object({
-  ...fields,
+  ...fields
 })
 
 const campaignUpdateValidation = Joi.object({
@@ -55,14 +55,44 @@ const campaignUpdateValidation = Joi.object({
   path_image: Joi.object({
     size: Joi.number().max(2_048_000),
     extension: Joi.string().valid('png', 'jpg', 'jpeg'),
-    mimetype: Joi.string().regex(/^image\//),
-  }).optional(),
+    mimetype: Joi.string().regex(/^image\//)
+  }).optional()
 })
 
-const campaignIdValidation = Joi.number()
+const campaignIdValidation = Joi.number().required().label('campaign_id')
+
+const campaignFiltersValidation = Joi.object({
+  keyword: Joi.string().optional().allow(''),
+  size: Joi.number().optional().allow(''),
+  page: Joi.number().optional().allow(''),
+  sort_by: Joi.string()
+    .valid('title', 'publish_date', 'status')
+    .optional()
+    .allow(''),
+  sort_value: Joi.string().valid('asc', 'desc').optional().allow(''),
+  status: Joi.string()
+    .valid('publish', 'pending', 'archived')
+    .optional()
+    .allow(''),
+  start_date: Joi.string()
+    .optional()
+    .allow('')
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .messages({
+      'string.pattern.base': 'start_date format is invalid'
+    }),
+  end_date: Joi.string()
+    .optional()
+    .allow('')
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .messages({
+      'string.pattern.base': 'end_date format is invalid'
+    })
+})
 
 export {
   campaignCreateValidation,
   campaignUpdateValidation,
   campaignIdValidation,
+  campaignFiltersValidation
 }

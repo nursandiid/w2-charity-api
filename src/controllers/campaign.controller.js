@@ -3,7 +3,8 @@ import validate from '../validations/validation.js'
 import {
   campaignCreateValidation,
   campaignUpdateValidation,
-  campaignIdValidation
+  campaignIdValidation,
+  campaignFiltersValidation
 } from '../validations/campaign.validate.js'
 import campaignService from '../services/campaign.service.js'
 import successResponse from '../responses/success.response.js'
@@ -18,7 +19,10 @@ import fs from 'fs'
  */
 const getAll = async (req, res, next) => {
   try {
-    //
+    const attributes = validate(campaignFiltersValidation, req.query, true)
+    const result = await campaignService.getAll(attributes)
+
+    return successResponse(res, result)
   } catch (error) {
     next(error)
   }

@@ -24,7 +24,6 @@ const prisma = new PrismaClient({
 })
 
 prisma.$on('error', (e) => {
-  console.error(e.message.replaceAll(/^\?\s/gm, '  '))
   logger.error(e)
 })
 
@@ -37,7 +36,7 @@ prisma.$on('info', (e) => {
 })
 
 prisma.$on('query', (e) => {
-  logger.info(e)
+  logger.debug(e)
 })
 
 export default prisma

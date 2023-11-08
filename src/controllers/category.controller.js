@@ -4,7 +4,7 @@ import {
   categoryCreateValidation,
   categoryUpdateValidation,
   categoryIdValidation,
-  queryFiltersValidation,
+  categoryFiltersValidation
 } from '../validations/category.validate.js'
 import categoryService from '../services/category.service.js'
 import successResponse from '../responses/success.response.js'
@@ -17,11 +17,7 @@ import successResponse from '../responses/success.response.js'
  */
 const getAll = async (req, res, next) => {
   try {
-    const attributes = validate(
-      queryFiltersValidation,
-      req.query,
-      true
-    )
+    const attributes = validate(categoryFiltersValidation, req.query, true)
     const result = await categoryService.getAll(attributes)
 
     return successResponse(res, result)

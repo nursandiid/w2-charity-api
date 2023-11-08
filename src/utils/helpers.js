@@ -2,15 +2,13 @@ import slug from 'slug'
 
 /**
  *
+ * Get values or attributes for pagination
+ *
  * @param {object} req
  */
 export const paginate = (req) => {
-  // ? logic skip :
-  // * 1 (page - 1) * size = 0
-  // * 2 (page - 1) * size = 10
-
-  const size = parseInt(req.size || 10)
-  const page = parseInt(req.page || 1)
+  const size = req.size || 10
+  const page = req.page || 1
   const skip = (page - 1) * size
 
   return { size, page, skip }
@@ -18,25 +16,21 @@ export const paginate = (req) => {
 
 /**
  *
+ * Get pagination link and send a response
+ *
  * @param {object} attributes
  * @returns
  */
 export const paginateLink = (attributes) => {
-  // ? logic from :
-  // * page * size - (size - 1)
-  // * 10 - 9 = 1
-  // * page * size - (size - 1)
-  // * 20 - 9 = 11
-
   const { data, size, page, total } = attributes
   return {
-    data: data,
+    data,
     per_page: size,
     current_page: page,
     last_page: Math.ceil((total || 1) / size),
     from: Math.ceil(page * size - (size - 1)),
     to: Math.ceil(page * size),
-    total: total,
+    total
   }
 }
 
@@ -53,7 +47,7 @@ export const getFileUploadAttributes = (file) => {
   return {
     size: file.size,
     extension: file.originalname.split('.').pop(),
-    mimetype: file.mimetype,
+    mimetype: file.mimetype
   }
 }
 

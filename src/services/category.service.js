@@ -15,20 +15,24 @@ const getAll = async (attributes) => {
   if (attributes.keyword) {
     filters.push({
       name: {
-        contains: attributes.keyword,
-      },
+        contains: attributes.keyword
+      }
     })
   }
 
-  if (attributes.sort_by == 'name') {
+  if (attributes.sort_by) {
     Object.assign(orderBy, {
-      name: attributes.sort_value,
+      [attributes['sort_by']]: attributes.sort_value
+    })
+  } else {
+    Object.assign(orderBy, {
+      created_at: 'desc'
     })
   }
 
   const categories = await prisma.categories.findMany({
     where: {
-      AND: filters,
+      AND: filters
     },
     skip,
     take: size,
@@ -43,25 +47,25 @@ const getAll = async (attributes) => {
               id: true,
               title: true,
               slug: true,
-              short_description: true,
-            },
-          },
-        },
-      },
-    },
+              short_description: true
+            }
+          }
+        }
+      }
+    }
   })
 
   const totalCategories = await prisma.categories.count({
     where: {
-      AND: filters,
-    },
+      AND: filters
+    }
   })
 
   return paginateLink({
     data: categories,
     size,
     page,
-    total: totalCategories,
+    total: totalCategories
   })
 }
 
@@ -74,8 +78,8 @@ const create = async (attributes) => {
   const newSlug = strSlug(attributes.name)
   let category = await prisma.categories.findFirst({
     where: {
-      slug: newSlug,
-    },
+      slug: newSlug
+    }
   })
 
   if (category) {
@@ -85,8 +89,8 @@ const create = async (attributes) => {
   category = await prisma.categories.create({
     data: {
       name: attributes.name,
-      slug: strSlug(attributes.name),
-    },
+      slug: strSlug(attributes.name)
+    }
   })
 
   return category
@@ -100,17 +104,17 @@ const create = async (attributes) => {
 const get = async (id) => {
   const category = await prisma.categories.findFirst({
     where: {
-      id,
+      id
     },
     include: {
       category_campaign: {
         select: {
           id: true,
           category_id: true,
-          campaign_id: true,
-        },
-      },
-    },
+          campaign_id: true
+        }
+      }
+    }
   })
 
   if (!category) {
@@ -129,17 +133,17 @@ const get = async (id) => {
 const update = async (id, attributes) => {
   let category = await prisma.categories.findFirst({
     where: {
-      id,
+      id
     },
     include: {
       category_campaign: {
         select: {
           id: true,
           category_id: true,
-          campaign_id: true,
-        },
-      },
-    },
+          campaign_id: true
+        }
+      }
+    }
   })
 
   if (!category) {
@@ -151,9 +155,9 @@ const update = async (id, attributes) => {
     where: {
       slug: newSlug,
       id: {
-        not: category.id,
-      },
-    },
+        not: category.id
+      }
+    }
   })
 
   if (slugIsExists) {
@@ -162,12 +166,12 @@ const update = async (id, attributes) => {
 
   category = await prisma.categories.update({
     where: {
-      id,
+      id
     },
     data: {
       name: attributes.name,
-      slug: newSlug,
-    },
+      slug: newSlug
+    }
   })
 
   return category
@@ -181,8 +185,8 @@ const update = async (id, attributes) => {
 const remove = async (id) => {
   const category = await prisma.categories.findFirst({
     where: {
-      id,
-    },
+      id
+    }
   })
 
   if (!category) {
@@ -191,8 +195,8 @@ const remove = async (id) => {
 
   await prisma.categories.delete({
     where: {
-      id,
-    },
+      id
+    }
   })
 
   return null

@@ -1,7 +1,11 @@
-import slug from 'slug'
 import prisma from '../applications/database.js'
 import ErrorMsg from '../errors/message.error.js'
-import { deleteSelectedProperties, strSlug } from '../utils/helpers.js'
+import {
+  deleteSelectedProperties,
+  paginate,
+  paginateLink,
+  strSlug
+} from '../utils/helpers.js'
 
 /**
  *
@@ -9,7 +13,73 @@ import { deleteSelectedProperties, strSlug } from '../utils/helpers.js'
  * @returns {array|object}
  */
 const getAll = async (attributes) => {
-  //
+  const { size, page, skip } = paginate(attributes)
+  let filters = []
+  let orderBy = {}
+
+  if (attributes.keyword) {
+    filters.push({
+      OR: [
+        {
+          title: {
+            contains: attributes.keyword
+          }
+        },
+        {
+          short_description: {
+            contains: attributes.keyword
+          }
+        }
+      ]
+    })
+  }
+
+  if (attributes.sort_by) {
+    orderBy = {
+      [attributes['sort_by']]: attributes.sort_value
+    }
+  } else {
+    orderBy = {
+      created_at: 'desc'
+    }
+  }
+
+  const campaigns = await prisma.campaigns.findMany({
+    where: {
+      AND: filters
+    },
+    skip,
+    take: size,
+    orderBy,
+    include: {
+      category_campaign: {
+        select: {
+          category_id: true,
+          campaign_id: true,
+          categories: {
+            select: {
+              id: true,
+              name: true,
+              slug: true
+            }
+          }
+        }
+      }
+    }
+  })
+
+  const totalCampaigns = await prisma.campaigns.count({
+    where: {
+      AND: filters
+    }
+  })
+
+  return paginateLink({
+    data: campaigns,
+    size,
+    page,
+    total: totalCampaigns
+  })
 }
 
 /**
@@ -18,7 +88,7 @@ const getAll = async (attributes) => {
  * @returns {object}
  */
 const create = async (attributes) => {
-  const newSlug = slug(attributes.title)
+  const newSlug = strSlug(attributes.title)
   let campaign = await prisma.campaigns.findFirst({
     where: {
       slug: newSlug
@@ -41,7 +111,7 @@ const create = async (attributes) => {
   })
 
   if (categories.length !== categoryIds.length) {
-    throw new ErrorMsg(400, 'Category Ids you entered is not valid')
+    throw new ErrorMsg(400, 'Category Ids you entered is invalid')
   }
 
   campaign = await prisma.campaigns.create({
@@ -162,7 +232,7 @@ const update = async (id, attributes) => {
   })
 
   if (categories.length !== categoryIds.length) {
-    throw new ErrorMsg(400, 'Category Ids you entered is not valid')
+    throw new ErrorMsg(400, 'Category Ids you entered is invalid')
   }
 
   if (attributes.end_date) {
