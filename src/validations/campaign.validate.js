@@ -4,7 +4,7 @@ const fields = {
   title: Joi.string().required(),
   short_description: Joi.string().optional(),
   body: Joi.string().required(),
-  category_ids: Joi.array().items(Joi.number().required()),
+  category_ids: Joi.array().items(Joi.number()).required(),
   status: Joi.string().optional().valid('publish', 'archived'),
   goal: Joi.number().required(),
   end_date: Joi.string()
@@ -42,6 +42,7 @@ const campaignCreateValidation = Joi.object({
 const campaignUpdateValidation = Joi.object({
   ...fields,
   body: Joi.string().optional(),
+  category_ids: Joi.array().items(Joi.number()).optional(),
   goal: Joi.number().optional(),
   receiver: Joi.string()
     .optional()

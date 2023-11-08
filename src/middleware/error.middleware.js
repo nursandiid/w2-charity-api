@@ -3,6 +3,7 @@ import express from 'express'
 import ErrorMsg from '../errors/message.error.js'
 import errorResponse from '../responses/error.response.js'
 import { Prisma } from '@prisma/client'
+import fs from 'fs'
 
 /**
  *
@@ -13,6 +14,10 @@ import { Prisma } from '@prisma/client'
  * @returns
  */
 const errorMiddleware = async (err, req, res, next) => {
+  if (fs.existsSync(req.file?.path)) {
+    fs.unlinkSync(req.file?.path)
+  }
+
   if (err instanceof Joi.ValidationError) {
     return errorResponse(
       res,

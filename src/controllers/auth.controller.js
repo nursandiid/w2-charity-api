@@ -91,10 +91,6 @@ const updateProfile = async (req, res, next) => {
 
     return successResponse(res, result, 'Updated')
   } catch (error) {
-    if (fs.existsSync(req.file?.path)) {
-      fs.unlinkSync(req.file?.path)
-    }
-
     next(error)
   }
 }

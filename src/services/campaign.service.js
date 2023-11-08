@@ -1,7 +1,7 @@
 import slug from 'slug'
 import prisma from '../applications/database.js'
 import ErrorMsg from '../errors/message.error.js'
-import { deleteSelectedProperties } from '../utils/helpers.js'
+import { deleteSelectedProperties, strSlug } from '../utils/helpers.js'
 
 /**
  *
@@ -21,21 +21,23 @@ const create = async (attributes) => {
   const newSlug = slug(attributes.title)
   let campaign = await prisma.campaigns.findFirst({
     where: {
-      slug: newSlug,
-    },
+      slug: newSlug
+    }
   })
 
   if (campaign) {
     throw new ErrorMsg(400, 'Campaign title already exists')
   }
 
-  const categoryIds = deleteSelectedProperties(attributes, ['category_ids']).shift()
+  const categoryIds = deleteSelectedProperties(attributes, [
+    'category_ids'
+  ]).shift()
   const categories = await prisma.categories.findMany({
     where: {
       id: {
-        in: categoryIds,
-      },
-    },
+        in: categoryIds
+      }
+    }
   })
 
   if (categories.length !== categoryIds.length) {
@@ -49,8 +51,8 @@ const create = async (attributes) => {
       end_date: new Date(attributes.end_date),
       publish_date: new Date(attributes.publish_date),
       category_campaign: {
-        create: categoryIds.map((category_id) => ({ category_id })),
-      },
+        create: categoryIds.map((category_id) => ({ category_id }))
+      }
     },
     include: {
       category_campaign: {
@@ -59,19 +61,19 @@ const create = async (attributes) => {
             select: {
               id: true,
               name: true,
-              slug: true,
-            },
-          },
-        },
+              slug: true
+            }
+          }
+        }
       },
       users: {
         select: {
           id: true,
           name: true,
-          email: true,
-        },
-      },
-    },
+          email: true
+        }
+      }
+    }
   })
 
   return campaign
@@ -83,7 +85,37 @@ const create = async (attributes) => {
  * @returns {object}
  */
 const get = async (id) => {
-  //
+  const campaign = await prisma.campaigns.findFirst({
+    where: {
+      id
+    },
+    include: {
+      category_campaign: {
+        select: {
+          categories: {
+            select: {
+              id: true,
+              name: true,
+              slug: true
+            }
+          }
+        }
+      },
+      users: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
+    }
+  })
+
+  if (!campaign) {
+    throw new ErrorMsg(404, 'Campaign not found')
+  }
+
+  return campaign
 }
 
 /**
@@ -92,8 +124,95 @@ const get = async (id) => {
  * @param {number} id
  * @returns {object}
  */
-const update = async (attributes, user, id) => {
-  //
+const update = async (id, attributes) => {
+  let campaign = await prisma.campaigns.findFirst({
+    where: {
+      id
+    }
+  })
+
+  if (!campaign) {
+    throw new ErrorMsg(404, 'Campaign not found')
+  }
+
+  const newSlug = strSlug(attributes.title)
+  const slugIsExists = await prisma.campaigns.findFirst({
+    where: {
+      slug: newSlug,
+      id: {
+        not: id
+      }
+    }
+  })
+
+  if (slugIsExists) {
+    throw new ErrorMsg(400, 'Campaign title already exists')
+  }
+
+  const categoryIds = deleteSelectedProperties(attributes, [
+    'category_ids'
+  ]).shift()
+
+  const categories = await prisma.categories.findMany({
+    where: {
+      id: {
+        in: categoryIds
+      }
+    }
+  })
+
+  if (categories.length !== categoryIds.length) {
+    throw new ErrorMsg(400, 'Category Ids you entered is not valid')
+  }
+
+  if (attributes.end_date) {
+    attributes.end_date = new Date(attributes.end_date)
+  }
+  if (attributes.publish_date) {
+    attributes.publish_date = new Date(attributes.publish_date)
+  }
+
+  const [, updatedCampaign] = await prisma.$transaction([
+    prisma.category_campaign.deleteMany({
+      where: {
+        campaign_id: campaign.id
+      }
+    }),
+    prisma.campaigns.update({
+      where: {
+        id
+      },
+      data: {
+        ...attributes,
+        slug: newSlug,
+        category_campaign: {
+          create: categoryIds.map((category_id) => ({ category_id }))
+        }
+      },
+      include: {
+        category_campaign: {
+          select: {
+            categories: {
+              select: {
+                id: true,
+                name: true,
+                slug: true
+              }
+            }
+          }
+        },
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    })
+  ])
+
+  return updatedCampaign
 }
 
 /**
@@ -102,7 +221,30 @@ const update = async (attributes, user, id) => {
  * @returns {null}
  */
 const remove = async (id) => {
-  //
+  const campaign = await prisma.campaigns.findFirst({
+    where: {
+      id
+    }
+  })
+
+  if (!campaign) {
+    throw new ErrorMsg(404, 'Campaign not found')
+  }
+
+  await prisma.$transaction([
+    prisma.category_campaign.deleteMany({
+      where: {
+        campaign_id: campaign.id
+      }
+    }),
+    prisma.campaigns.delete({
+      where: {
+        id
+      }
+    })
+  ])
+
+  return null
 }
 
 export default { getAll, create, get, update, remove }

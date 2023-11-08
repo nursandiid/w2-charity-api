@@ -79,7 +79,7 @@ const get = async (id) => {
   })
 
   if (!user) {
-    throw new ErrorMsg(404, 'User is not found')
+    throw new ErrorMsg(404, 'User not found')
   }
 
   return user
@@ -99,7 +99,7 @@ const updateProfile = async (id, attributes) => {
   })
 
   if (!user) {
-    throw new ErrorMsg(404, 'User is not found')
+    throw new ErrorMsg(404, 'User not found')
   }
 
   delete attributes.email
@@ -128,7 +128,7 @@ const updatePassword = async (id, attributes) => {
   })
 
   if (!user) {
-    throw new ErrorMsg(404, 'User is not found')
+    throw new ErrorMsg(404, 'User not found')
   }
 
   const checkCurrentPassword = await bcrypt.compare(
