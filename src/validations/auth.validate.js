@@ -19,19 +19,19 @@ const authLoginValidation = Joi.object({
 })
 
 const authUpdateProfileValidation = Joi.object({
-  name: Joi.string().required(),
   email: Joi.string().email().required(),
-  phone: Joi.string().optional().allow(''),
-  gender: Joi.string().optional().allow('').valid('laki_laki', 'perempuan'),
+  name: Joi.string().optional(),
+  phone: Joi.string().optional(),
+  gender: Joi.string().optional().valid('laki_laki', 'perempuan'),
   birth_date: Joi.string()
     .optional()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .messages({
-      'string.pattern.base': 'date format is not valid',
+      'string.pattern.base': 'birth_date format is not valid',
     }),
-  job: Joi.string().optional().allow(''),
-  address: Joi.string().optional().allow(''),
-  about: Joi.string().optional().allow(''),
+  job: Joi.string().optional(),
+  address: Joi.string().optional(),
+  about: Joi.string().optional(),
   path_image: Joi.object({
     size: Joi.number().max(2_048_000),
     extension: Joi.string().valid('png', 'jpg', 'jpeg'),

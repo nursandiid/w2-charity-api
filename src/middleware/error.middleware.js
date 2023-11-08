@@ -2,6 +2,7 @@ import Joi from 'joi'
 import express from 'express'
 import ErrorMsg from '../errors/message.error.js'
 import errorResponse from '../responses/error.response.js'
+import { Prisma } from '@prisma/client'
 
 /**
  *
@@ -26,6 +27,20 @@ const errorMiddleware = async (err, req, res, next) => {
     )
   } else if (err instanceof ErrorMsg) {
     return errorResponse(res, null, err.message, err.status)
+  } else if (
+    err instanceof Prisma.PrismaClientValidationError ||
+    err instanceof Prisma.PrismaClientKnownRequestError ||
+    err instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    let message = err.message
+
+    if (process.env.APP_ENV !== 'local') {
+      message = `${err.message.split('\n')[1]} ${err.message.split('\n').pop()}`
+    }
+
+    console.error(err)
+
+    return errorResponse(res, null, message, err.status || 500)
   } else if (err) {
     console.error(err)
 

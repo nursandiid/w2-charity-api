@@ -145,12 +145,12 @@ describe('PUT /api/auth/current - endpoint', () => {
       .field({
         name: 'Nursandi updated',
         email: 'nursandi@example.com',
-        phone: '',
         gender: 'laki_laki',
+        phone: '-',
         birth_date: '2020-01-01',
-        job: '',
-        address: '',
-        about: '',
+        job: '-',
+        address: '-',
+        about: '-',
       })
       .attach('path_image', process.cwd() + '/test/file-test/1.png')
 

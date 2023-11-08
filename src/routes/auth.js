@@ -9,13 +9,13 @@ const imageUpload = multer({ storage: storage('user') })
 authRouter
   .post('/register', authController.register)
   .post('/login', authController.login)
-  .get('/current', verifyToken, authController.get)
-  .put(
-    '/current',
-    imageUpload.single('path_image'),
-    verifyToken,
-    authController.updateProfile
-  )
-  .patch('/password', verifyToken, authController.updatePassword)
+
+authRouter
+  .use(verifyToken)
+  .route('/current')
+  .get(authController.get)
+  .put(imageUpload.single('path_image'), authController.updateProfile)
+
+authRouter.patch('/password', verifyToken, authController.updatePassword)
 
 export default authRouter

@@ -28,13 +28,10 @@ Request Body :
 - receiver : [Saya Sendiri, Keluarga / Kerabat, Organisasi / Lembaga, Lainnya]
 ```json
 {
-    "user_id": "",
     "title": "",
-    "slug": "",
     "short_description": "",
     "body": "",
     "status": "",
-    "nominal": "",
     "goal": "",
     "end_date": "",
     "note": "",
@@ -55,13 +52,10 @@ Request Body :
 - receiver : [Saya Sendiri, Keluarga / Kerabat, Organisasi / Lembaga, Lainnya]
 ```json
 {
-    "user_id": "",
     "title": "",
-    "slug": "",
     "short_description": "",
     "body": "",
     "status": "",
-    "nominal": "",
     "goal": "",
     "end_date": "",
     "note": "",

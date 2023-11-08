@@ -43,7 +43,7 @@ const register = async (attributes) => {
  * @returns {object}
  */
 const login = async (attributes) => {
-  let user = await prisma.users.findFirst({
+  const user = await prisma.users.findFirst({
     where: {
       email: attributes.email,
     },
@@ -87,11 +87,11 @@ const get = async (id) => {
 
 /**
  *
- * @param {*} attributes
  * @param {number} id
+ * @param {*} attributes
  * @returns {object}
  */
-const updateProfile = async (attributes, id) => {
+const updateProfile = async (id, attributes) => {
   let user = await prisma.users.findFirst({
     where: {
       id,
@@ -101,6 +101,8 @@ const updateProfile = async (attributes, id) => {
   if (!user) {
     throw new ErrorMsg(404, 'User is not found')
   }
+
+  delete attributes.email
 
   user = await prisma.users.update({
     where: {
@@ -114,11 +116,11 @@ const updateProfile = async (attributes, id) => {
 
 /**
  *
- * @param {*} attributes
  * @param {number} id
+ * @param {*} attributes
  * @returns {object}
  */
-const updatePassword = async (attributes, id) => {
+const updatePassword = async (id, attributes) => {
   let user = await prisma.users.findFirst({
     where: {
       id,

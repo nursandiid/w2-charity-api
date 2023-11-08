@@ -83,7 +83,7 @@ const updateProfile = async (req, res, next) => {
       attributes.birth_date = new Date(attributes.birth_date)
     }
 
-    const result = await authService.updateProfile(attributes, user.id)
+    const result = await authService.updateProfile(user.id, attributes)
 
     if (attributes.path_image && fs.existsSync(user.path_image)) {
       fs.unlinkSync(user.path_image)
@@ -108,7 +108,7 @@ const updateProfile = async (req, res, next) => {
 const updatePassword = async (req, res, next) => {
   try {
     const attributes = validate(authUpdatePasswordValidation, req.body)
-    const result = await authService.updatePassword(attributes, req.user.id)
+    const result = await authService.updatePassword(req.user.id, attributes)
 
     return successResponse(res, result, 'Updated')
   } catch (error) {

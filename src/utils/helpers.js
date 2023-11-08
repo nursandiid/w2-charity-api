@@ -1,3 +1,5 @@
+import slug from 'slug'
+
 /**
  *
  * @param {object} req
@@ -53,4 +55,32 @@ export const getFileUploadAttributes = (file) => {
     extension: file.originalname.split('.').pop(),
     mimetype: file.mimetype,
   }
+}
+
+/**
+ *
+ * @param {string} string
+ * @param {string} [separator="-"]
+ * @returns {string}
+ */
+export const strSlug = (string, separator = '-') => {
+  return slug(string, separator)
+}
+
+/**
+ * Remove the selected properties of object and return them
+ *
+ * @param {object} obj
+ * @param {array} props
+ * @returns {array}
+ */
+export const deleteSelectedProperties = (obj, props = []) => {
+  let deletedProps = []
+
+  props.forEach((prop) => {
+    deletedProps.push(obj[prop])
+    delete obj[prop]
+  })
+
+  return deletedProps
 }

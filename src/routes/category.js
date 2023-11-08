@@ -1,7 +1,10 @@
 import express from 'express'
 import categoryController from '../controllers/category.controller.js'
+import verifyToken from '../middleware/verify-token.middleware.js'
 
 const categoryRouter = express.Router()
+
+categoryRouter.use(verifyToken)
 
 categoryRouter
   .route('/')

@@ -1,11 +1,10 @@
-import slug from 'slug'
 import prisma from '../applications/database.js'
 import ErrorMsg from '../errors/message.error.js'
-import { paginate, paginateLink } from '../utils/helpers.js'
+import { paginate, paginateLink, strSlug } from '../utils/helpers.js'
 
 /**
- * 
- * @param {*} attributes 
+ *
+ * @param {*} attributes
  * @returns {array|object}
  */
 const getAll = async (attributes) => {
@@ -37,9 +36,16 @@ const getAll = async (attributes) => {
     include: {
       category_campaign: {
         select: {
-          id: true,
           category_id: true,
           campaign_id: true,
+          campaigns: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              short_description: true,
+            },
+          },
         },
       },
     },
@@ -60,14 +66,15 @@ const getAll = async (attributes) => {
 }
 
 /**
- * 
- * @param {*} attributes 
+ *
+ * @param {*} attributes
  * @returns {object}
  */
 const create = async (attributes) => {
-  let category = await prisma.categories.count({
+  const newSlug = strSlug(attributes.name)
+  let category = await prisma.categories.findFirst({
     where: {
-      name: attributes.name,
+      slug: newSlug,
     },
   })
 
@@ -78,7 +85,7 @@ const create = async (attributes) => {
   category = await prisma.categories.create({
     data: {
       name: attributes.name,
-      slug: slug(attributes.name),
+      slug: strSlug(attributes.name),
     },
   })
 
@@ -86,12 +93,12 @@ const create = async (attributes) => {
 }
 
 /**
- * 
- * @param {number} id 
+ *
+ * @param {number} id
  * @returns {object}
  */
 const get = async (id) => {
-  let category = await prisma.categories.findFirst({
+  const category = await prisma.categories.findFirst({
     where: {
       id,
     },
@@ -114,12 +121,12 @@ const get = async (id) => {
 }
 
 /**
- * 
- * @param {*} attributes 
- * @param {number} id 
+ *
+ * @param {number} id
+ * @param {*} attributes
  * @returns {object}
  */
-const update = async (attributes, id) => {
+const update = async (id, attributes) => {
   let category = await prisma.categories.findFirst({
     where: {
       id,
@@ -137,6 +144,20 @@ const update = async (attributes, id) => {
 
   if (!category) {
     throw new ErrorMsg(404, 'Category not found')
+  }
+
+  const newSlug = strSlug(attributes.name)
+  const slugIsExists = await prisma.categories.findFirst({
+    where: {
+      slug: newSlug,
+      id: {
+        not: category.id,
+      },
+    },
+  })
+
+  if (slugIsExists) {
+    throw new ErrorMsg(400, 'Category name already exists')
   }
 
   category = await prisma.categories.update({
@@ -145,7 +166,7 @@ const update = async (attributes, id) => {
     },
     data: {
       name: attributes.name,
-      slug: slug(attributes.name),
+      slug: newSlug,
     },
   })
 
@@ -153,12 +174,12 @@ const update = async (attributes, id) => {
 }
 
 /**
- * 
- * @param {number} id 
+ *
+ * @param {number} id
  * @returns {null}
  */
 const remove = async (id) => {
-  let category = await prisma.categories.findFirst({
+  const category = await prisma.categories.findFirst({
     where: {
       id,
     },
