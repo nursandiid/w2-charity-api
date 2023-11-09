@@ -13,7 +13,7 @@ const fields = {
     .messages({
       'string.pattern.base': 'end_date format is invalid'
     }),
-  note: Joi.string().optional(),
+  note: Joi.string().optional().allow(''),
   receiver: Joi.string()
     .required()
     .valid(
@@ -88,7 +88,7 @@ const campaignFiltersValidation = Joi.object({
     .messages({
       'string.pattern.base': 'end_date format is invalid'
     })
-})
+}).and('start_date', 'end_date')
 
 export {
   campaignCreateValidation,

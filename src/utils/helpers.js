@@ -78,3 +78,21 @@ export const deleteSelectedProperties = (obj, props = []) => {
 
   return deletedProps
 }
+
+/**
+ * Generate random string
+ *
+ * @param {number} length
+ * @returns {string}
+ */
+export const strRandom = (length) => {
+  let result = ''
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charsLength = chars.length
+
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * charsLength))
+  }
+
+  return result
+}

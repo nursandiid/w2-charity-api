@@ -5,52 +5,64 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const createTestUser = async () => {
+const createTestUser = async (email = 'nursandi@example.com') => {
   const adminRole = await prisma.roles.findFirst({
     where: {
-      name: 'admin',
-    },
+      name: 'admin'
+    }
   })
 
   await prisma.users.create({
     data: {
       name: 'Nursandi',
-      email: 'nursandi@example.com',
+      email,
       password: await bcrypt.hash('123456', 10),
       roles: {
         connect: {
-          id: adminRole.id,
-        },
-      },
-    },
+          id: adminRole.id
+        }
+      }
+    }
   })
 }
 
-const removeTestUser = async () => {
-  await prisma.users.deleteMany({
-    where: {
-      email: 'nursandi@example.com',
-    },
-  })
+const removeTestUser = async (email = 'nursandi@example.com') => {
+  await prisma.$transaction([
+    prisma.campaigns.deleteMany({
+      where: {
+        users: {
+          email
+        }
+      }
+    }),
+    prisma.users.deleteMany({
+      where: {
+        email
+      }
+    })
+  ])
 }
 
-const getTestUser = async (tokenExpiresIn = '1d') => {
+const getTestUser = async (
+  email = 'nursandi@example.com',
+  tokenExpiresIn = '1d'
+) => {
   const user = await prisma.users.findFirst({
     where: {
-      email: 'nursandi@example.com',
+      email
     },
     include: {
-      roles: true,
-    },
+      roles: true
+    }
   })
 
   const accessToken = jwt.sign({ user }, process.env.JWT_TOKEN, {
-    expiresIn: tokenExpiresIn,
+    expiresIn: tokenExpiresIn
   })
 
   return {
     ...user,
-    access_token: accessToken,
+    access_token: accessToken
   }
 }
 

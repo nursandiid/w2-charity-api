@@ -5,20 +5,23 @@ import {
   removeTestUser,
   getTestUser,
 } from '../utils/auth.utils.js'
+import { strRandom } from '../../src/utils/helpers.js'
+
+const uniqueEmail = strRandom(15) + '@example.com'
 
 describe('POST /api/auth/register - endpoint', () => {
   beforeEach(async () => {
-    await removeTestUser()
+    await removeTestUser(uniqueEmail)
   })
 
   afterEach(async () => {
-    await removeTestUser()
+    await removeTestUser(uniqueEmail)
   })
 
   it('should be able to register a user', async () => {
     const result = await supertest(web).post('/api/auth/register').send({
       name: 'Nursandi',
-      email: 'nursandi@example.com',
+      email: uniqueEmail,
       password: '123456',
       password_confirmation: '123456',
     })
@@ -39,7 +42,7 @@ describe('POST /api/auth/register - endpoint', () => {
   it('should fail to register a user with if the password does not match', async () => {
     const result = await supertest(web).post('/api/auth/register').send({
       name: 'Nursandi',
-      email: 'nursandi@example.com',
+      email: uniqueEmail,
       password: '123456',
       password_confirmation: 'SALAHH',
     })
@@ -51,17 +54,17 @@ describe('POST /api/auth/register - endpoint', () => {
 
 describe('POST /api/auth/login - endpoint', () => {
   beforeEach(async () => {
-    await removeTestUser()
-    await createTestUser()
+    await removeTestUser(uniqueEmail)
+    await createTestUser(uniqueEmail)
   })
 
   afterEach(async () => {
-    await removeTestUser()
+    await removeTestUser(uniqueEmail)
   })
 
   it('should be able to login with valid identities', async () => {
     const result = await supertest(web).post('/api/auth/login').send({
-      email: 'nursandi@example.com',
+      email: uniqueEmail,
       password: '123456',
     })
 
@@ -71,7 +74,7 @@ describe('POST /api/auth/login - endpoint', () => {
 
   it('should fail to login if the identities is wrong', async () => {
     const result = await supertest(web).post('/api/auth/login').send({
-      email: 'nursandi@example.com',
+      email: uniqueEmail,
       password: 'SALAH',
     })
 
@@ -82,16 +85,16 @@ describe('POST /api/auth/login - endpoint', () => {
 
 describe('GET /api/auth/current - endpoint', () => {
   beforeEach(async () => {
-    await removeTestUser()
-    await createTestUser()
+    await removeTestUser(uniqueEmail)
+    await createTestUser(uniqueEmail)
   })
 
   afterEach(async () => {
-    await removeTestUser()
+    await removeTestUser(uniqueEmail)
   })
 
   it('should be able to get current profile', async () => {
-    const user = await getTestUser()
+    const user = await getTestUser(uniqueEmail)
     const result = await supertest(web)
       .get('/api/auth/current')
       .set('Authorization', 'Bearer ' + user.access_token)
@@ -101,7 +104,7 @@ describe('GET /api/auth/current - endpoint', () => {
   })
 
   it('should fail to get current profile if token is expired', async () => {
-    const user = await getTestUser('1s')
+    const user = await getTestUser(uniqueEmail, '1s')
     await new Promise((resolve, reject) => {
       console.info('hold request in 3s')
       setTimeout(() => {
@@ -129,22 +132,22 @@ describe('GET /api/auth/current - endpoint', () => {
 
 describe('PUT /api/auth/current - endpoint', () => {
   beforeEach(async () => {
-    await removeTestUser()
-    await createTestUser()
+    await removeTestUser(uniqueEmail)
+    await createTestUser(uniqueEmail)
   })
 
   afterEach(async () => {
-    await removeTestUser()
+    await removeTestUser(uniqueEmail)
   })
 
   it('should be able to update current profile', async () => {
-    const user = await getTestUser()
+    const user = await getTestUser(uniqueEmail)
     const result = await supertest(web)
       .put('/api/auth/current')
       .set('Authorization', 'Bearer ' + user.access_token)
       .field({
         name: 'Nursandi updated',
-        email: 'nursandi@example.com',
+        email: uniqueEmail,
         gender: 'laki_laki',
         phone: '-',
         birth_date: '2020-01-01',
@@ -162,16 +165,16 @@ describe('PUT /api/auth/current - endpoint', () => {
 
 describe('PATCH /api/auth/password - endpoint', () => {
   beforeEach(async () => {
-    await removeTestUser()
-    await createTestUser()
+    await removeTestUser(uniqueEmail)
+    await createTestUser(uniqueEmail)
   })
 
   afterEach(async () => {
-    await removeTestUser()
+    await removeTestUser(uniqueEmail)
   })
 
   it('should be able to update password with valid current password and match password confirmation', async () => {
-    const user = await getTestUser()
+    const user = await getTestUser(uniqueEmail)
     const result = await supertest(web)
       .patch('/api/auth/password')
       .set('Authorization', 'Bearer ' + user.access_token)
@@ -186,7 +189,7 @@ describe('PATCH /api/auth/password - endpoint', () => {
   })
 
   it('should fail to update password with invalid current password', async () => {
-    const user = await getTestUser()
+    const user = await getTestUser(uniqueEmail)
     const result = await supertest(web)
       .patch('/api/auth/password')
       .set('Authorization', 'Bearer ' + user.access_token)

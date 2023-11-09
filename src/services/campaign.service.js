@@ -44,6 +44,21 @@ const getAll = async (attributes) => {
     }
   }
 
+  if (attributes.status) {
+    filters.push({
+      status: attributes.status
+    })
+  }
+
+  if (attributes.start_date && attributes.end_date) {
+    filters.push({
+      publish_date: {
+        gte: new Date(attributes.start_date),
+        lte: new Date(attributes.end_date)
+      }
+    })
+  }
+
   const campaigns = await prisma.campaigns.findMany({
     where: {
       AND: filters
@@ -219,9 +234,22 @@ const update = async (id, attributes) => {
     throw new ErrorMsg(400, 'Campaign title already exists')
   }
 
-  const categoryIds = deleteSelectedProperties(attributes, [
+  let categoryIds = deleteSelectedProperties(attributes, [
     'category_ids'
   ]).shift()
+
+  if (!categoryIds) {
+    categoryIds = (
+      await prisma.category_campaign.findMany({
+        where: {
+          campaign_id: campaign.id
+        },
+        select: {
+          category_id: true
+        }
+      })
+    ).map((category) => category.category_id)
+  }
 
   const categories = await prisma.categories.findMany({
     where: {

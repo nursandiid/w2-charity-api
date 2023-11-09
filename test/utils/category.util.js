@@ -1,47 +1,64 @@
-import slug from 'slug'
+import { strSlug } from '../../src/utils/helpers.js'
 import prisma from '../../src/applications/database.js'
 
-const createTestCategory = async () => {
+const createTestCategory = async (name = 'Category 1') => {
   await prisma.categories.create({
     data: {
-      name: 'Category 1',
-      slug: slug('Category 1'),
-    },
+      name,
+      slug: strSlug(name)
+    }
   })
 }
 
-const removeTestCategory = async () => {
-  await prisma.categories.deleteMany({
-    where: {
-      name: 'Category 1',
-    },
+const removeTestCategory = async (name = 'Category 1') => {
+  await prisma.$transaction(async (prisma) => {
+    await prisma.category_campaign.deleteMany({
+      where: {
+        categories: {
+          name
+        }
+      }
+    })
+
+    await prisma.categories.deleteMany({
+      where: {
+        name
+      }
+    })
   })
 }
 
-const createDummyTestCategories = async () => {
+const createDummyTestCategories = async (name = 'Category', length = 30) => {
   let categories = []
-  for (let i = 1; i <= 30; i++) {
+  for (let i = 1; i <= length; i++) {
     categories.push({
-      name: `Category ${i}`,
-      slug: slug(`Category ${i}`),
+      name: `${name} ${i}`,
+      slug: strSlug(`${name} ${i}`)
     })
   }
 
   await prisma.categories.createMany({
-    data: categories,
+    data: categories
   })
 }
 
 const removeAllTestCategories = async () => {
-  await prisma.categories.deleteMany({})
+  await prisma.$transaction([
+    prisma.category_campaign.deleteMany(),
+    prisma.categories.deleteMany()
+  ])
 }
 
-const getTestCategory = async () => {
+const getTestCategory = async (name = 'Category 1') => {
   return await prisma.categories.findFirst({
     where: {
-      name: 'Category 1',
-    },
+      name
+    }
   })
+}
+
+const getAllTestCategories = async () => {
+  return await prisma.categories.findMany()
 }
 
 export {
@@ -50,4 +67,5 @@ export {
   createDummyTestCategories,
   removeAllTestCategories,
   getTestCategory,
+  getAllTestCategories
 }

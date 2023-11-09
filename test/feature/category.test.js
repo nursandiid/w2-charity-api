@@ -5,56 +5,56 @@ import {
   createTestCategory,
   getTestCategory,
   removeAllTestCategories,
-  removeTestCategory,
+  removeTestCategory
 } from '../utils/category.util.js'
+import {
+  createTestUser,
+  getTestUser,
+  removeTestUser
+} from '../utils/auth.utils.js'
+import { strRandom } from '../../src/utils/helpers.js'
 
-describe('GET /api/categories - endpoint', () => {
-  beforeEach(async () => {
-    await removeAllTestCategories()
-    await createDummyTestCategories()
-  })
+const uniqueEmail = strRandom(15) + '@example.com'
+const uniqueCategoryName = strRandom(10)
 
-  afterEach(async () => {
-    await removeAllTestCategories()
-  })
+beforeAll(async () => {
+  await createTestUser(uniqueEmail)
+})
 
-  it('should be able to get all or spesific categories with filter', async () => {
-    const result = await supertest(web).get('/api/categories').query({
-      keyword: '',
-      size: 10,
-      page: 1,
-      sort_by: 'name',
-      sort_value: 'asc',
-    })
-
-    expect(result.status).toBe(200)
-    expect(result.body.data.per_page).toBe(10)
-    expect(result.body.data.total).toBe(30)
-  })
+afterAll(async () => {
+  await removeTestUser(uniqueEmail)
 })
 
 describe('POST /api/categories - endpoint', () => {
   beforeEach(async () => {
-    await removeTestCategory()
+    await removeTestCategory(uniqueCategoryName)
   })
 
   afterEach(async () => {
-    await removeTestCategory()
+    await removeTestCategory(uniqueCategoryName)
   })
 
   it('should be able to create new category', async () => {
-    const result = await supertest(web).post('/api/categories').send({
-      name: 'Category 1',
-    })
+    const user = await getTestUser(uniqueEmail)
+    const result = await supertest(web)
+      .post('/api/categories')
+      .set('Authorization', 'Bearer ' + user.access_token)
+      .send({
+        name: uniqueCategoryName
+      })
 
     expect(result.status).toBe(201)
-    expect(result.body.data.name).toBe('Category 1')
+    expect(result.body.data.name).toBe(uniqueCategoryName)
   })
 
   it('should reject to create new category with empty fields', async () => {
-    const result = await supertest(web).post('/api/categories').send({
-      name: '',
-    })
+    const user = await getTestUser(uniqueEmail)
+    const result = await supertest(web)
+      .post('/api/categories')
+      .set('Authorization', 'Bearer ' + user.access_token)
+      .send({
+        name: ''
+      })
 
     expect(result.status).toBe(422)
   })
@@ -62,27 +62,33 @@ describe('POST /api/categories - endpoint', () => {
 
 describe('GET /api/categories/:id - endpoint', () => {
   beforeEach(async () => {
-    await removeTestCategory()
-    await createTestCategory()
+    await removeTestCategory(uniqueCategoryName)
+    await createTestCategory(uniqueCategoryName)
   })
 
   afterEach(async () => {
-    await removeTestCategory()
+    await removeTestCategory(uniqueCategoryName)
   })
 
   it('should be able to get selected category', async () => {
-    const category = await getTestCategory()
-    const result = await supertest(web).get('/api/categories/' + category.id)
+    const user = await getTestUser(uniqueEmail)
+    const category = await getTestCategory(uniqueCategoryName)
+    const result = await supertest(web)
+      .get('/api/categories/' + category.id)
+      .set('Authorization', 'Bearer ' + user.access_token)
 
     expect(result.status).toBe(200)
-    expect(result.body.data.name).toBe('Category 1')
+    expect(result.body.data.name).toBe(uniqueCategoryName)
   })
 
   it('should failed to get selected category with invalid ID', async () => {
-    const category = await getTestCategory()
-    await removeTestCategory()
+    const user = await getTestUser(uniqueEmail)
+    const category = await getTestCategory(uniqueCategoryName)
+    await removeTestCategory(uniqueCategoryName)
 
-    const result = await supertest(web).get('/api/categories/' + category.id)
+    const result = await supertest(web)
+      .get('/api/categories/' + category.id)
+      .set('Authorization', 'Bearer ' + user.access_token)
 
     expect(result.status).toBe(404)
   })
@@ -90,8 +96,8 @@ describe('GET /api/categories/:id - endpoint', () => {
 
 describe('PUT /api/categories/:id - endpoint', () => {
   beforeEach(async () => {
-    await removeTestCategory()
-    await createTestCategory()
+    await removeTestCategory(uniqueCategoryName)
+    await createTestCategory(uniqueCategoryName)
   })
 
   afterEach(async () => {
@@ -99,11 +105,13 @@ describe('PUT /api/categories/:id - endpoint', () => {
   })
 
   it('should be able to update selected category', async () => {
-    const category = await getTestCategory()
+    const user = await getTestUser(uniqueEmail)
+    const category = await getTestCategory(uniqueCategoryName)
     const result = await supertest(web)
       .put('/api/categories/' + category.id)
+      .set('Authorization', 'Bearer ' + user.access_token)
       .send({
-        name: 'Category 1 updated',
+        name: 'Category 1 updated'
       })
 
     expect(result.status).toBe(200)
@@ -113,8 +121,8 @@ describe('PUT /api/categories/:id - endpoint', () => {
 
 describe('DELETE /api/categories/:id - endpoint', () => {
   beforeEach(async () => {
-    await removeTestCategory()
-    await createTestCategory()
+    await removeTestCategory(uniqueCategoryName)
+    await createTestCategory(uniqueCategoryName)
   })
 
   afterEach(async () => {
@@ -122,9 +130,41 @@ describe('DELETE /api/categories/:id - endpoint', () => {
   })
 
   it('should be able to delete selected category', async () => {
-    const category = await getTestCategory()
-    const result = await supertest(web).delete('/api/categories/' + category.id)
+    const user = await getTestUser(uniqueEmail)
+    const category = await getTestCategory(uniqueCategoryName)
+    const result = await supertest(web)
+      .delete('/api/categories/' + category.id)
+      .set('Authorization', 'Bearer ' + user.access_token)
 
     expect(result.status).toBe(204)
+  })
+})
+
+describe('GET /api/categories - endpoint', () => {
+  beforeEach(async () => {
+    await removeAllTestCategories()
+    await createDummyTestCategories(uniqueCategoryName)
+  })
+
+  afterEach(async () => {
+    await removeAllTestCategories()
+  })
+
+  it('should be able to get all or spesific categories with filter', async () => {
+    const user = await getTestUser(uniqueEmail)
+    const result = await supertest(web)
+      .get('/api/categories')
+      .set('Authorization', 'Bearer ' + user.access_token)
+      .query({
+        keyword: '',
+        size: 10,
+        page: 1,
+        sort_by: 'name',
+        sort_value: 'asc'
+      })
+
+    expect(result.status).toBe(200)
+    expect(result.body.data.per_page).toBe(10)
+    expect(result.body.data.total).toBe(30)
   })
 })

@@ -29,9 +29,9 @@ const authUpdateProfileValidation = Joi.object({
     .messages({
       'string.pattern.base': 'birth_date format is invalid'
     }),
-  job: Joi.string().optional(),
-  address: Joi.string().optional(),
-  about: Joi.string().optional(),
+  job: Joi.string().optional().allow(''),
+  address: Joi.string().optional().allow(''),
+  about: Joi.string().optional().allow(''),
   path_image: Joi.object({
     size: Joi.number().max(2_048_000),
     extension: Joi.string().valid('png', 'jpg', 'jpeg'),
