@@ -130,7 +130,7 @@ describe('PUT /api/campaigns/:id - endpoint', () => {
   })
 
   afterEach(async () => {
-    await removeAllTestCategories()
+    await removeTestCampaign(uniqueCampaignTitle)
   })
 
   it('should be able to update selected campaign', async () => {
@@ -155,7 +155,7 @@ describe('DELETE /api/campaigns/:id - endpoint', () => {
   })
 
   afterEach(async () => {
-    await removeAllTestCategories()
+    await removeTestCampaign(uniqueCampaignTitle)
   })
 
   it('should be able to delete selected campaign', async () => {

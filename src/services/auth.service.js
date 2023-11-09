@@ -11,8 +11,8 @@ import jwt from 'jsonwebtoken'
 const register = async (attributes) => {
   let user = await prisma.users.findFirst({
     where: {
-      email: attributes.email,
-    },
+      email: attributes.email
+    }
   })
 
   if (user) {
@@ -21,8 +21,8 @@ const register = async (attributes) => {
 
   const donorRole = await prisma.roles.findFirst({
     where: {
-      name: 'donor',
-    },
+      name: 'donor'
+    }
   })
 
   user = await prisma.users.create({
@@ -30,8 +30,8 @@ const register = async (attributes) => {
       name: attributes.name,
       email: attributes.email,
       password: await bcrypt.hash(attributes.password, 10),
-      role_id: donorRole.id,
-    },
+      role_id: donorRole.id
+    }
   })
 
   return user
@@ -45,24 +45,30 @@ const register = async (attributes) => {
 const login = async (attributes) => {
   const user = await prisma.users.findFirst({
     where: {
-      email: attributes.email,
-    },
+      email: attributes.email
+    }
   })
 
-  const passwordIsValid =
-    user.password && (await bcrypt.compare(attributes.password, user.password))
+  if (!user) {
+    throw new ErrorMsg(401, 'Email or password is wrong')
+  }
 
-  if (!user || !passwordIsValid) {
+  const passwordIsValid = await bcrypt.compare(
+    attributes.password,
+    user.password
+  )
+
+  if (!passwordIsValid) {
     throw new ErrorMsg(401, 'Email or password is wrong')
   }
 
   const accessToken = jwt.sign({ user }, process.env.JWT_TOKEN, {
-    expiresIn: '1d',
+    expiresIn: '1d'
   })
 
   return {
     ...user,
-    access_token: accessToken,
+    access_token: accessToken
   }
 }
 
@@ -74,8 +80,8 @@ const login = async (attributes) => {
 const get = async (id) => {
   const user = await prisma.users.findFirst({
     where: {
-      id,
-    },
+      id
+    }
   })
 
   if (!user) {
@@ -94,8 +100,8 @@ const get = async (id) => {
 const updateProfile = async (id, attributes) => {
   let user = await prisma.users.findFirst({
     where: {
-      id,
-    },
+      id
+    }
   })
 
   if (!user) {
@@ -106,9 +112,9 @@ const updateProfile = async (id, attributes) => {
 
   user = await prisma.users.update({
     where: {
-      id,
+      id
     },
-    data: attributes,
+    data: attributes
   })
 
   return user
@@ -123,8 +129,8 @@ const updateProfile = async (id, attributes) => {
 const updatePassword = async (id, attributes) => {
   let user = await prisma.users.findFirst({
     where: {
-      id,
-    },
+      id
+    }
   })
 
   if (!user) {
@@ -142,11 +148,11 @@ const updatePassword = async (id, attributes) => {
 
   user = await prisma.users.update({
     where: {
-      id,
+      id
     },
     data: {
-      password: await bcrypt.hash(attributes.password, 10),
-    },
+      password: await bcrypt.hash(attributes.password, 10)
+    }
   })
 
   return user

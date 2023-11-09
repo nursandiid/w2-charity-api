@@ -1,13 +1,13 @@
 import express from 'express'
 import validate from '../validations/validation.js'
-import {
-  categoryCreateValidation,
-  categoryUpdateValidation,
-  categoryIdValidation,
-  categoryFiltersValidation
-} from '../validations/category.validate.js'
-import categoryService from '../services/category.service.js'
 import successResponse from '../responses/success.response.js'
+import {
+  donorCreateValidation,
+  donorUpdateValidation,
+  donorIdValidation,
+  donorFiltersValidation
+} from '../validations/donor.validate.js'
+import donorService from '../services/donor.service.js'
 
 /**
  *
@@ -17,8 +17,8 @@ import successResponse from '../responses/success.response.js'
  */
 const getAll = async (req, res, next) => {
   try {
-    const attributes = validate(categoryFiltersValidation, req.query, true)
-    const result = await categoryService.getAll(attributes)
+    const attributes = validate(donorFiltersValidation, req.query)
+    const result = await donorService.getAll(attributes)
 
     return successResponse(res, result)
   } catch (error) {
@@ -34,8 +34,8 @@ const getAll = async (req, res, next) => {
  */
 const create = async (req, res, next) => {
   try {
-    const attributes = validate(categoryCreateValidation, req.body)
-    const result = await categoryService.create(attributes)
+    const attributes = validate(donorCreateValidation, req.body)
+    const result = await donorService.create(attributes)
 
     return successResponse(res, result, 'Created', 201)
   } catch (error) {
@@ -51,8 +51,8 @@ const create = async (req, res, next) => {
  */
 const get = async (req, res, next) => {
   try {
-    const id = validate(categoryIdValidation, req.params.id)
-    const result = await categoryService.get(id)
+    const id = validate(donorIdValidation, req.params.id)
+    const result = await donorService.get(id)
 
     return successResponse(res, result)
   } catch (error) {
@@ -68,11 +68,11 @@ const get = async (req, res, next) => {
  */
 const update = async (req, res, next) => {
   try {
-    const id = validate(categoryIdValidation, req.params.id)
-    const attributes = validate(categoryUpdateValidation, req.body)
-    const result = await categoryService.update(id, attributes)
+    const id = validate(donorIdValidation, req.params.id)
+    const attributes = validate(donorUpdateValidation, req.body)
+    const result = await donorService.update(id, attributes)
 
-    return successResponse(res, result, 'Updated', 200)
+    return successResponse(res, result, 'Updated')
   } catch (error) {
     next(error)
   }
@@ -86,8 +86,8 @@ const update = async (req, res, next) => {
  */
 const remove = async (req, res, next) => {
   try {
-    const id = validate(categoryIdValidation, req.params.id)
-    const result = await categoryService.remove(id)
+    const id = validate(donorIdValidation, req.params.id)
+    const result = await donorService.remove(id)
 
     return successResponse(res, result, 'Deleted', 204)
   } catch (error) {

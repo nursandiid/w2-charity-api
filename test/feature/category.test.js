@@ -101,7 +101,7 @@ describe('PUT /api/categories/:id - endpoint', () => {
   })
 
   afterEach(async () => {
-    await removeAllTestCategories()
+    await removeTestCategory(uniqueCategoryName)
   })
 
   it('should be able to update selected category', async () => {
@@ -126,7 +126,7 @@ describe('DELETE /api/categories/:id - endpoint', () => {
   })
 
   afterEach(async () => {
-    await removeAllTestCategories()
+    await removeTestCategory(uniqueCategoryName)
   })
 
   it('should be able to delete selected category', async () => {

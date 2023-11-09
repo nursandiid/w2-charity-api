@@ -6,6 +6,7 @@ import notFoundMiddleware from '../middleware/not-found.middleware.js'
 import categoryRouter from '../routes/category.js'
 import authRouter from '../routes/auth.js'
 import campaignRouter from '../routes/campaign.js'
+import donorRouter from '../routes/donor.js'
 
 const app = express()
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/campaigns', campaignRouter)
+app.use('/api/donors', donorRouter)
 
 app.use(errorMiddleware)
 app.use(notFoundMiddleware)

@@ -2,7 +2,6 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import ErrorMsg from '../errors/message.error.js'
 import { getAuth } from '../services/auth.service.js'
-import errorResponse from '../responses/error.response.js'
 
 /**
  *
@@ -18,24 +17,28 @@ const verifyToken = async (req, res, next) => {
     }
 
     jwt.verify(accessToken, process.env.JWT_TOKEN, async (err, decoded) => {
-      if (err) {
-        if (
-          err.name === 'JsonWebTokenError' &&
-          err.message === 'jwt malformed'
-        ) {
-          return errorResponse(res, null, 'Invalid token format', 401)
-        } else if (
-          err.name === 'TokenExpiredError' &&
-          err.message === 'jwt expired'
-        ) {
-          return errorResponse(res, null, 'Token is expired', 401)
+      try {
+        if (err) {
+          if (
+            err.name === 'JsonWebTokenError' &&
+            err.message === 'jwt malformed'
+          ) {
+            throw new ErrorMsg(401, 'Invalid token format')
+          } else if (
+            err.name === 'TokenExpiredError' &&
+            err.message === 'jwt expired'
+          ) {
+            throw new ErrorMsg(401, 'Token is expired')
+          }
+
+          throw new ErrorMsg(401, 'Unauthorized')
         }
 
-        return errorResponse(res, null, 'Unauthorized', 401)
+        req.user = await getAuth(decoded.user.id)
+        next()
+      } catch (error) {
+        next(error)
       }
-
-      req.user = await getAuth(decoded.user.id)
-      next()
     })
   } catch (error) {
     next(error)

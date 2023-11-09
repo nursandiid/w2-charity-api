@@ -43,6 +43,35 @@ const removeTestUser = async (email = 'nursandi@example.com') => {
   ])
 }
 
+const createDummyTestUsers = async (email = 'nursandi@example.com') => {
+  const donorRole = await prisma.roles.findFirst({
+    where: {
+      name: 'donor'
+    }
+  })
+
+  let users = []
+  for (let i = 1; i <= 30; i++) {
+    users.push({
+      name: `Nursandi ${i}`,
+      email: `${i}.${email}`,
+      password: await bcrypt.hash('123456', 10),
+      role_id: donorRole.id
+    })
+  }
+
+  await prisma.users.createMany({
+    data: users
+  })
+}
+
+const removeAllTestUsers = async () => {
+  await prisma.$transaction([
+    prisma.campaigns.deleteMany(),
+    prisma.users.deleteMany()
+  ])
+}
+
 const getTestUser = async (
   email = 'nursandi@example.com',
   tokenExpiresIn = '1d'
@@ -66,4 +95,10 @@ const getTestUser = async (
   }
 }
 
-export { createTestUser, removeTestUser, getTestUser }
+export {
+  createTestUser,
+  removeTestUser,
+  createDummyTestUsers,
+  removeAllTestUsers,
+  getTestUser
+}
