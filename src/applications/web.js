@@ -7,6 +7,8 @@ import categoryRouter from '../routes/category.js'
 import authRouter from '../routes/auth.js'
 import campaignRouter from '../routes/campaign.js'
 import donorRouter from '../routes/donor.js'
+import contactRouter from '../routes/contact.js'
+import publicRouter from '../routes/public.js'
 
 const app = express()
 
@@ -26,6 +28,8 @@ app.use('/api/auth', authRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/campaigns', campaignRouter)
 app.use('/api/donors', donorRouter)
+app.use('/api/contacts', contactRouter)
+app.use('/api', publicRouter)
 
 app.use(errorMiddleware)
 app.use(notFoundMiddleware)

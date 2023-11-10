@@ -6,7 +6,7 @@ import {
   getTestUser,
   removeTestUser,
   removeAllTestUsers
-} from '../utils/auth.utils.js'
+} from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
 
 const uniqueEmail = strRandom(15) + '@example.com'
@@ -145,7 +145,7 @@ describe('DELETE /api/donors/:id - endpoint', () => {
 describe('GET /api/donors - endpoint', () => {
   beforeEach(async () => {
     await removeAllTestUsers()
-    
+
     await createTestUser(uniqueEmail)
     await createDummyTestUsers(uniqueDonorEmail)
   })

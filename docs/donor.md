@@ -4,6 +4,7 @@
 Endpoint : GET /api/donors
 
 Query Params :
+- keyword : [name, email]
 - sort_by : [name, created_at, campaigns_total, donations_total]
 - sort_value : [asc, desc]
 ```json

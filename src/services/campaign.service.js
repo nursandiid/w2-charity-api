@@ -36,7 +36,7 @@ const getAll = async (attributes) => {
 
   if (attributes.sort_by) {
     orderBy = {
-      [attributes['sort_by']]: attributes.sort_value
+      [attributes.sort_by]: attributes.sort_value
     }
   } else {
     orderBy = {
@@ -89,12 +89,7 @@ const getAll = async (attributes) => {
     }
   })
 
-  return paginateLink({
-    data: campaigns,
-    size,
-    page,
-    total: totalCampaigns
-  })
+  return paginateLink(campaigns, size, page, totalCampaigns)
 }
 
 /**

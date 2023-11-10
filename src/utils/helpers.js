@@ -18,11 +18,13 @@ export const paginate = (req) => {
  *
  * Get pagination link and send a response
  *
- * @param {object} attributes
+ * @param {*} data
+ * @param {number} size
+ * @param {number} page
+ * @param {number} total
  * @returns
  */
-export const paginateLink = (attributes) => {
-  const { data, size, page, total } = attributes
+export const paginateLink = (data, size, page, total) => {
   return {
     data,
     per_page: size,

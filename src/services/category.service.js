@@ -22,7 +22,7 @@ const getAll = async (attributes) => {
 
   if (attributes.sort_by) {
     Object.assign(orderBy, {
-      [attributes['sort_by']]: attributes.sort_value
+      [attributes.sort_by]: attributes.sort_value
     })
   } else {
     Object.assign(orderBy, {
@@ -61,12 +61,7 @@ const getAll = async (attributes) => {
     }
   })
 
-  return paginateLink({
-    data: categories,
-    size,
-    page,
-    total: totalCategories
-  })
+  return paginateLink(categories, size, page, totalCategories)
 }
 
 /**

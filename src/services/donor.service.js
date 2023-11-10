@@ -19,7 +19,9 @@ const getAll = async (attributes = []) => {
         {
           name: {
             contains: attributes.keyword
-          },
+          }
+        },
+        {
           email: {
             contains: attributes.keyword
           }
@@ -33,7 +35,7 @@ const getAll = async (attributes = []) => {
       case 'campaigns_total':
         orderBy = {
           campaigns: {
-            _count: 'desc'
+            _count: attributes.sort_value
           }
         }
         break
@@ -77,7 +79,7 @@ const getAll = async (attributes = []) => {
     }
   })
 
-  return paginateLink({ data: users, size, page, total: totalUsers })
+  return paginateLink(users, size, page, totalUsers)
 }
 
 /**

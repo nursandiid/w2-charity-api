@@ -4,6 +4,7 @@
 Endpoint : GET /api/campaigns
 
 Query Params :
+- keyword : [title, short_description]
 - status : [publish, pending, archived]
 - sort_by : [title, publish_date, status]
 - sort_value : [asc, desc]

@@ -11,7 +11,7 @@ import {
   createTestUser,
   getTestUser,
   removeTestUser
-} from '../utils/auth.utils.js'
+} from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
 
 const uniqueEmail = strRandom(15) + '@example.com'

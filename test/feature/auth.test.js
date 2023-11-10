@@ -3,8 +3,8 @@ import web from '../../src/applications/web.js'
 import {
   createTestUser,
   removeTestUser,
-  getTestUser,
-} from '../utils/auth.utils.js'
+  getTestUser
+} from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
 
 const uniqueEmail = strRandom(15) + '@example.com'
@@ -23,7 +23,7 @@ describe('POST /api/auth/register - endpoint', () => {
       name: 'Nursandi',
       email: uniqueEmail,
       password: '123456',
-      password_confirmation: '123456',
+      password_confirmation: '123456'
     })
 
     expect(result.status).toBe(201)
@@ -32,7 +32,7 @@ describe('POST /api/auth/register - endpoint', () => {
 
   it('should fail to register a user with empty fields', async () => {
     const result = await supertest(web).post('/api/auth/register').send({
-      name: 'Nursandi',
+      name: 'Nursandi'
     })
 
     expect(result.status).toBe(422)
@@ -44,7 +44,7 @@ describe('POST /api/auth/register - endpoint', () => {
       name: 'Nursandi',
       email: uniqueEmail,
       password: '123456',
-      password_confirmation: 'SALAHH',
+      password_confirmation: 'SALAHH'
     })
 
     expect(result.status).toBe(422)
@@ -65,7 +65,7 @@ describe('POST /api/auth/login - endpoint', () => {
   it('should be able to login with valid identities', async () => {
     const result = await supertest(web).post('/api/auth/login').send({
       email: uniqueEmail,
-      password: '123456',
+      password: '123456'
     })
 
     expect(result.status).toBe(200)
@@ -75,7 +75,7 @@ describe('POST /api/auth/login - endpoint', () => {
   it('should fail to login if the identities is wrong', async () => {
     const result = await supertest(web).post('/api/auth/login').send({
       email: uniqueEmail,
-      password: 'SALAH',
+      password: 'SALAH'
     })
 
     expect(result.status).toBe(401)
@@ -153,7 +153,7 @@ describe('PUT /api/auth/current - endpoint', () => {
         birth_date: '2020-01-01',
         job: '-',
         address: '-',
-        about: '-',
+        about: '-'
       })
       .attach('path_image', process.cwd() + '/test/file-test/1.png')
 
@@ -181,7 +181,7 @@ describe('PATCH /api/auth/password - endpoint', () => {
       .send({
         current_password: '123456',
         password: 'admin123',
-        password_confirmation: 'admin123',
+        password_confirmation: 'admin123'
       })
 
     expect(result.status).toBe(200)
@@ -196,7 +196,7 @@ describe('PATCH /api/auth/password - endpoint', () => {
       .send({
         current_password: 'SALAH',
         password: 'admin123',
-        password_confirmation: 'admin123',
+        password_confirmation: 'admin123'
       })
 
     expect(result.status).toBe(400)
