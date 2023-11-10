@@ -1,12 +1,12 @@
 import supertest from 'supertest'
 import web from '../../src/applications/web.js'
 import {
-  createDummyTestContacts,
-  createTestContact,
-  getTestContact,
-  removeAllTestContacts,
-  removeTestContact
-} from '../utils/contact.util'
+  createDummyTestSubscribers,
+  createTestSubscriber,
+  getTestSubscriber,
+  removeAllTestSubscribers,
+  removeTestSubscriber
+} from '../utils/subscriber.util.js'
 import {
   createTestUser,
   getTestUser,
@@ -14,32 +14,28 @@ import {
 } from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
 
-const uniqueEmail = strRandom(16) + '@example.com'
+const uniqueEmail = strRandom(13) + '@example.com'
 
-describe('POST /api/contacts - endpoint', () => {
+describe('POST /api/subscribers - endpoint', () => {
   beforeEach(async () => {
-    await removeTestContact()
+    await removeTestSubscriber()
   })
 
   afterEach(async () => {
-    await removeTestContact()
+    await removeTestSubscriber()
   })
 
-  it('should be able to create a new contact', async () => {
-    const result = await supertest(web).post('/api/contacts').send({
-      name: 'Test',
-      phone: '1234',
-      email: 'test@gmail.com',
-      subject: 'Test contact',
-      message: 'Pesan test contact'
+  it('should be able to create a new subscriber', async () => {
+    const result = await supertest(web).post('/api/subscribers').send({
+      email: 'test@gmail.com'
     })
 
     expect(result.status).toBe(201)
     expect(result.body.data).toBeDefined()
   })
 
-  it('should fail to create a new contact with empty fields', async () => {
-    const result = await supertest(web).post('/api/contacts').send({
+  it('should fail to create a new subscriber with empty fields', async () => {
+    const result = await supertest(web).post('/api/subscribers').send({
       name: '',
       phone: '',
       email: '',
@@ -51,51 +47,51 @@ describe('POST /api/contacts - endpoint', () => {
   })
 })
 
-describe('DELETE /api/contacts/:id - endpoint', () => {
+describe('DELETE /api/subscribers/:id - endpoint', () => {
   beforeEach(async () => {
-    await createTestContact()
+    await createTestSubscriber()
     await createTestUser(uniqueEmail)
   })
 
   afterEach(async () => {
-    removeTestContact()
+    removeTestSubscriber()
     removeTestUser(uniqueEmail)
   })
 
-  it('should be able to delete selected contact', async () => {
+  it('should be able to delete selected subscriber', async () => {
     const user = await getTestUser(uniqueEmail)
-    const contact = await getTestContact()
+    const subscriber = await getTestSubscriber()
     const result = await supertest(web)
-      .delete('/api/contacts/' + contact.id)
+      .delete('/api/subscribers/' + subscriber.id)
       .set('Authorization', 'Bearer ' + user.access_token)
 
     expect(result.status).toBe(204)
   })
 })
 
-describe('GET /api/contacts - endpoint', () => {
+describe('GET /api/subscribers - endpoint', () => {
   beforeEach(async () => {
-    await removeAllTestContacts()
+    await removeAllTestSubscribers()
     await createTestUser(uniqueEmail)
-    await createDummyTestContacts()
-  })
-  
-  afterEach(async () => {
-    await removeTestUser(uniqueEmail)
-    await removeAllTestContacts()
+    await createDummyTestSubscribers()
   })
 
-  it('should be able to get all or spesific contacts with filter', async () => {
+  afterEach(async () => {
+    await removeTestUser(uniqueEmail)
+    await removeAllTestSubscribers()
+  })
+
+  it('should be able to get all or spesific subscribers with filter', async () => {
     const user = await getTestUser(uniqueEmail)
     const result = await supertest(web)
-      .get('/api/contacts')
+      .get('/api/subscribers')
       .set('Authorization', 'Bearer ' + user.access_token)
       .query({
         keyword: '',
         size: 10,
         page: 1,
-        sort_by: 'name',
-        sort_value: 'asc'
+        sort_by: 'created_at',
+        sort_value: 'desc'
       })
 
     expect(result.status).toBe(200)

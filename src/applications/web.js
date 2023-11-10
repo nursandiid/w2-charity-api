@@ -9,6 +9,7 @@ import campaignRouter from '../routes/campaign.js'
 import donorRouter from '../routes/donor.js'
 import contactRouter from '../routes/contact.js'
 import publicRouter from '../routes/public.js'
+import subscriberRouter from '../routes/subscriber.js'
 
 const app = express()
 
@@ -24,12 +25,13 @@ dotenv.config()
 app.get('/', (req, res) => {
   res.send(`Hi, it's working`)
 })
+app.use('/api', publicRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/campaigns', campaignRouter)
 app.use('/api/donors', donorRouter)
 app.use('/api/contacts', contactRouter)
-app.use('/api', publicRouter)
+app.use('/api/subscribers', subscriberRouter)
 
 app.use(errorMiddleware)
 app.use(notFoundMiddleware)

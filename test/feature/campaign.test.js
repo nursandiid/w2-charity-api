@@ -19,7 +19,7 @@ import {
 } from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
 
-const uniqueEmail = strRandom(15) + '@example.com'
+const uniqueEmail = strRandom(20) + '@example.com'
 const uniqueCategoryName = strRandom(10)
 const uniqueCampaignTitle = strRandom(10)
 

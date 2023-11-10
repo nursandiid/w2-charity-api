@@ -14,7 +14,7 @@ import {
 } from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
 
-const uniqueEmail = strRandom(15) + '@example.com'
+const uniqueEmail = strRandom(12) + '@example.com'
 const uniqueCategoryName = strRandom(10)
 
 beforeAll(async () => {
