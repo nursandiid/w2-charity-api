@@ -8,21 +8,17 @@ import {
   getTestDonation
 } from '../utils/donation.util.js'
 import {
-  createDummyTestCampaigns,
   createTestCampaign,
   getTestCampaign,
-  removeAllTestCampaigns,
   removeTestCampaign
 } from '../utils/campaign.util.js'
 import {
   createDummyTestCategories,
-  getAllTestCategories,
   removeAllTestCategories
 } from '../utils/category.util.js'
 import {
   createTestUser,
   getTestUser,
-  removeAllTestUsers,
   removeTestUser
 } from '../utils/auth.util.js'
 import { strRandom } from '../../src/utils/helpers.js'
@@ -76,7 +72,6 @@ describe('POST /api/donations - endpoint', () => {
 
   it('should fail to create a new donation with empty fields', async () => {
     const user = await getTestUser(uniqueEmail)
-    // const campaign = await getTestCampaign(uniqueCampaignTitle)
     const result = await supertest(web)
       .post('/api/donations')
       .set('Authorization', 'Bearer ' + user.access_token)
@@ -114,7 +109,7 @@ describe('GET /api/donations/:id - endpoint', () => {
   it('should fail to get selected donation with an invalid ID', async () => {
     const user = await getTestUser(uniqueEmail)
     const donation = await getTestDonation(uniqueEmail)
-    removeTestDonation(uniqueEmail)
+    await removeTestDonation(uniqueEmail)
 
     const result = await supertest(web)
       .get('/api/donations/' + donation.id)

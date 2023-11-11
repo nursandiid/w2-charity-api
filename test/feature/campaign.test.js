@@ -24,8 +24,9 @@ const uniqueCategoryName = strRandom(10)
 const uniqueCampaignTitle = strRandom(10)
 
 beforeAll(async () => {
-  await createTestUser(uniqueEmail)
   await removeAllTestCategories()
+
+  await createTestUser(uniqueEmail)
   await createDummyTestCategories(uniqueCategoryName, 3)
 })
 

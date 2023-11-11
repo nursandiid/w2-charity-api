@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 
 const rolesSeeder = async () => {
   await prisma.roles.createMany({
-    data: [{ name: 'admin' }, { name: 'donor' }],
+    data: [{ name: 'admin' }, { name: 'donor' }]
   })
 
   console.info('🌱 Roles seeding completed successfully')
@@ -12,8 +12,8 @@ const rolesSeeder = async () => {
 const usersSeeder = async () => {
   const roleAdmin = await prisma.roles.findFirst({
     where: {
-      name: 'admin',
-    },
+      name: 'admin'
+    }
   })
 
   if (!roleAdmin) {
@@ -23,7 +23,7 @@ const usersSeeder = async () => {
 
   await prisma.users.upsert({
     where: {
-      email: 'nursandi@example.com',
+      email: 'nursandi@example.com'
     },
     create: {
       name: 'Nursandi',
@@ -31,11 +31,11 @@ const usersSeeder = async () => {
       password: await bcrypt.hash('123456', 10),
       roles: {
         connect: {
-          id: roleAdmin.id,
-        },
-      },
+          id: roleAdmin.id
+        }
+      }
     },
-    update: {},
+    update: {}
   })
 
   console.info('🌱 Users seeding completed successfully')
@@ -44,7 +44,7 @@ const usersSeeder = async () => {
 const settingSeeder = async () => {
   await prisma.settings.upsert({
     where: {
-      email: 'support@w2charity.com',
+      email: 'support@w2charity.com'
     },
     create: {
       email: 'support@w2charity.com',
@@ -62,18 +62,55 @@ const settingSeeder = async () => {
       instagram_link: '-',
       twitter_link: '-',
       fanpage_link: '-',
-      google_plus_link: '-',
+      google_plus_link: '-'
     },
-    update: {},
+    update: {}
   })
 
   console.info('🌱 Setting seeding completed successfully')
+}
+
+const bankSeeder = async () => {
+  const bankCount = await prisma.bank.count({
+    where: {
+      code: {
+        in: ['002', '009', '014']
+      }
+    }
+  })
+
+  if (bankCount > 0) {
+    return
+  }
+
+  await prisma.bank.createMany({
+    data: [
+      {
+        code: '002',
+        name: 'BANK BRI',
+        path_image: 'storage/uploads/bank/002.png'
+      },
+      {
+        code: '009',
+        name: 'BANK BNI',
+        path_image: 'storage/uploads/bank/009.png'
+      },
+      {
+        code: '014',
+        name: 'BANK BCA',
+        path_image: 'storage/uploads/bank/014.png'
+      }
+    ]
+  })
+
+  console.info('🌱 Banks seeding completed successfully')
 }
 
 const run = async () => {
   try {
     await usersSeeder()
     await settingSeeder()
+    await bankSeeder()
   } catch (e) {
     console.error(e)
     process.exit(1)

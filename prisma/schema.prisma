@@ -17,6 +17,7 @@ model bank {
   bank_setting bank_setting[]
   bank_user    bank_user[]
   cashouts     cashouts[]
+  payments     payments[]
 }
 
 model bank_setting {
@@ -184,6 +185,7 @@ model payments {
   updated_at   DateTime? @updatedAt @db.Timestamp(0)
   donations    donations @relation(fields: [order_number], references: [order_number], onDelete: Cascade, map: "payments_order_number_foreign")
   users        users     @relation(fields: [user_id], references: [id], map: "payments_user_id_foreign")
+  bank         bank      @relation(fields: [bank_id], references: [id], map: "payments_bank_id_foreign")
 
   @@index([order_number], map: "payments_order_number_index")
   @@index([user_id], map: "payments_user_id_foreign")

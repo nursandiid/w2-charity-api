@@ -1,5 +1,4 @@
 import { addLeadingZero } from '../../src/utils/helpers.js'
-import { createTestCampaign } from './campaign.util.js'
 import prisma from '../../src/applications/database.js'
 
 const createTestDonation = async (email, campaignTitle) => {

@@ -5,10 +5,10 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const createTestUser = async (email = 'nursandi@example.com') => {
+const createTestUser = async (email = 'nursandi@example.com', role = 'admin') => {
   const adminRole = await prisma.roles.findFirst({
     where: {
-      name: 'admin'
+      name: role
     }
   })
 
