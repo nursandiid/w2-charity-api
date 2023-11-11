@@ -81,6 +81,9 @@ const get = async (id) => {
   const user = await prisma.users.findFirst({
     where: {
       id
+    },
+    include: {
+      roles: true
     }
   })
 

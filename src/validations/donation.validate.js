@@ -9,7 +9,7 @@ const donationCreateValidation = Joi.object({
 
 const donationUpdateValidation = Joi.object({
   campaign_id: Joi.number().required(),
-  status: Joi.string().valid('confirmed').required()
+  status: Joi.string().valid('confirmed', 'canceled').required()
 })
 
 const donationIdValidation = Joi.number().required().label('donation_id')
