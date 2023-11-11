@@ -6,21 +6,21 @@ const prisma = new PrismaClient({
   log: [
     {
       emit: 'event',
-      level: 'query',
+      level: 'query'
     },
     {
       emit: 'event',
-      level: 'error',
+      level: 'error'
     },
     {
       emit: 'event',
-      level: 'info',
+      level: 'info'
     },
     {
       emit: 'event',
-      level: 'warn',
-    },
-  ],
+      level: 'warn'
+    }
+  ]
 })
 
 prisma.$on('error', (e) => {

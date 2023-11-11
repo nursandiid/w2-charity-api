@@ -98,3 +98,18 @@ export const strRandom = (length) => {
 
   return result
 }
+
+/**
+ * 
+ * @param {number} number 
+ * @param {number} length 
+ * @returns 
+ */
+export const addLeadingZero = (number, length) => {
+  let str = String(number)
+  if (str.length > length) return
+
+  str = str.padStart(length, '0')
+
+  return str
+}

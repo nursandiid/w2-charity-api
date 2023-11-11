@@ -5,7 +5,7 @@ Endpoint : GET /api/donations
 
 Query Params :
 - status : [confirmed, not confirmed, canceled]
-- sort_by : [donor, title, nominal, status, donation_date]
+- sort_by : [donor, title, nominal, status, created_at]
 - sort_value : [asc, desc]
 ```json
 {

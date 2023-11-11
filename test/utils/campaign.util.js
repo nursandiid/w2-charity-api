@@ -34,7 +34,13 @@ const removeTestCampaign = async (title = 'Campaign title 1') => {
         }
       }
     })
-
+    await prisma.donations.deleteMany({
+      where: {
+        campaigns: {
+          title
+        }
+      }
+    })
     await prisma.campaigns.deleteMany({
       where: {
         title
@@ -76,6 +82,7 @@ const createDummyTestCampaigns = async (email, title = 'Campaign title') => {
 const removeAllTestCampaigns = async () => {
   await prisma.$transaction([
     prisma.category_campaign.deleteMany(),
+    prisma.donations.deleteMany(),
     prisma.campaigns.deleteMany()
   ])
 }

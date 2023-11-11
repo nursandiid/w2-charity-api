@@ -19,7 +19,7 @@ const errorMiddleware = async (err, req, res, next) => {
     fs.unlinkSync(req.file?.path)
   }
 
-  if (err) logger.error(err.message)
+  if (err) logger.error(err, err.message)
 
   if (err instanceof Joi.ValidationError) {
     return errorResponse(
@@ -47,7 +47,7 @@ const errorMiddleware = async (err, req, res, next) => {
     }
 
     return errorResponse(res, null, message, err.status || 500)
-  } else if (err) {
+  } else {
     return errorResponse(res, null, err.message, err.status || 500)
   }
 

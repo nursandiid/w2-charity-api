@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcrypt'
-import { strRandom } from '../../src/utils/helpers.js'
+import { strRandom, addLeadingZero } from '../../src/utils/helpers.js'
 
 it('should be able to generate string with uuid', () => {
   const str = uuid()
@@ -21,9 +21,15 @@ it('should be able to generate string for jwt token', async () => {
   expect(str).toBeDefined()
 })
 
-it('should be able to generate random string', async () => {
+it('should be able to generate random string', () => {
   const str = strRandom(25)
 
   expect(str).toBeDefined()
   expect(str.length).toBe(25)
 })
+
+it('should be able to generate order number', () => {
+  const orderNumber = 'PX' + addLeadingZero(Math.floor(Math.random() * 999999), 6)
+
+  console.log(orderNumber)
+});
