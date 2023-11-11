@@ -2,11 +2,12 @@ import express from 'express'
 import campaignController from '../controllers/campaign.controller.js'
 import { multer, storage } from '../applications/multer.js'
 import verifyToken from '../middleware/verify-token.middleware.js'
+import verifyRole from '../middleware/verify-role.middleware.js'
 
 const campaignRouter = express.Router()
 const imageUpload = multer({ storage: storage('campaign') })
 
-campaignRouter.use(verifyToken)
+campaignRouter.use(verifyToken, verifyRole('admin', 'donor'))
 
 campaignRouter
   .route('/')
