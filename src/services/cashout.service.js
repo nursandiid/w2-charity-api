@@ -1,6 +1,6 @@
 import prisma from '../applications/database.js'
 import ErrorMsg from '../errors/message.error.js'
-import { deleteSelectedProperties } from '../utils/helpers.js'
+import { paginate, paginateLink } from '../utils/helpers.js'
 
 /**
  *
@@ -8,7 +8,85 @@ import { deleteSelectedProperties } from '../utils/helpers.js'
  * @returns {array|object}
  */
 const getAll = async (attributes = []) => {
-  //
+  const { size, page, skip } = paginate(attributes)
+  let filters = []
+  let orderBy = {}
+
+  if (attributes.keyword) {
+    filters.push({
+      OR: [
+        {
+          campaigns: {
+            title: {
+              contains: attributes.keyword
+            }
+          }
+        },
+        {
+          users: {
+            name: {
+              contains: attributes.keyword
+            }
+          }
+        }
+      ]
+    })
+  }
+
+  if (attributes.status) {
+    filters.push({
+      status: attributes.status
+    })
+  }
+
+  if (attributes.sort_by) {
+    switch (attributes.sort_by) {
+      case 'title':
+        orderBy = {
+          campaigns: {
+            title: attributes.sort_value
+          }
+        }
+        break
+      case 'donor':
+        orderBy = {
+          users: {
+            name: attributes.sort_value
+          }
+        }
+        break
+      default:
+        orderBy = {
+          [attributes.sort_by]: attributes.sort_value
+        }
+        break
+    }
+  } else {
+    orderBy = {
+      created_at: 'desc'
+    }
+  }
+
+  const cashouts = await prisma.cashouts.findMany({
+    where: {
+      AND: filters
+    },
+    skip,
+    take: size,
+    orderBy,
+    include: {
+      campaigns: true,
+      users: true
+    }
+  })
+
+  const totalCashouts = await prisma.cashouts.count({
+    where: {
+      AND: filters
+    }
+  })
+
+  return paginateLink(cashouts, size, page, totalCashouts)
 }
 
 /**
@@ -74,6 +152,10 @@ const create = async (attributes) => {
           id: bank.id
         }
       }
+    },
+    include: {
+      campaigns: true,
+      users: true
     }
   })
 
@@ -138,7 +220,8 @@ const update = async (id, attributes) => {
         }
       },
       include: {
-        campaigns: true
+        campaigns: true,
+        users: true
       }
     })
   ])

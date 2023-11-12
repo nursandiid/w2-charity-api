@@ -208,3 +208,24 @@ describe('DELETE /api/cashouts/:id - endpoint', () => {
     expect(result.status).toBe(204)
   })
 })
+
+describe('GET /api/cashouts - endpoint', () => {
+  beforeEach(async () => {
+    await removeTestCashout(uniqueEmail)
+    await createTestCashout(uniqueEmail, uniqueCampaignTitle)
+  })
+
+  afterEach(async () => {
+    await removeTestCashout(uniqueEmail)
+  })
+
+  it('should be able to get all or spesific cashouts with filter', async () => {
+    const user = await getTestUser(uniqueEmail)
+    const result = await supertest(web)
+      .get('/api/cashouts')
+      .set('Authorization', 'Bearer ' + user.access_token)
+
+    expect(result.status).toBe(200)
+    expect(result.body.data.total).toBe(1)
+  })
+})
