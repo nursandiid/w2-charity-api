@@ -25,7 +25,6 @@ Request Body :
 ```json
 {
     "campaign_id": "",
-    "user_id": "",
     "order_number": "",
     "anonim": "",
     "nominal": "",
@@ -38,17 +37,12 @@ Request Body :
 Endpoint : GET /api/donations/:id
 
 ## Update Donation
-Endpoint : PUT /api/donations/:id
+Endpoint : PATCH /api/donations/:id
 
 Request Body :
 ```json
 {
     "campaign_id": "",
-    "user_id": "",
-    "order_number": "",
-    "anonim": "",
-    "nominal": "",
-    "support": "",
     "status": ""
 }
 ```

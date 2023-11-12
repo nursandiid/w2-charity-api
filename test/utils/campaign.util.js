@@ -9,7 +9,7 @@ const createTestCampaign = async (email, title = 'Campaign title 1') => {
       short_description: '-',
       body: '-',
       status: 'publish',
-      goal: 1000000,
+      goal: 1_000_000,
       end_date: new Date('2023-12-01'),
       note: '-',
       receiver: 'Lainnya',
@@ -34,6 +34,7 @@ const removeTestCampaign = async (title = 'Campaign title 1') => {
         }
       }
     })
+
     await prisma.donations.deleteMany({
       where: {
         campaigns: {
@@ -41,6 +42,15 @@ const removeTestCampaign = async (title = 'Campaign title 1') => {
         }
       }
     })
+
+    await prisma.cashouts.deleteMany({
+      where: {
+        campaigns: {
+          title
+        }
+      }
+    })
+
     await prisma.campaigns.deleteMany({
       where: {
         title
@@ -64,7 +74,7 @@ const createDummyTestCampaigns = async (email, title = 'Campaign title') => {
       short_description: '-',
       body: '-',
       status: 'publish',
-      goal: 1000000,
+      goal: 1_000_000,
       end_date: new Date('2023-12-01'),
       note: '-',
       receiver: 'Lainnya',
@@ -83,6 +93,7 @@ const removeAllTestCampaigns = async () => {
   await prisma.$transaction([
     prisma.category_campaign.deleteMany(),
     prisma.donations.deleteMany(),
+    prisma.cashouts.deleteMany(),
     prisma.campaigns.deleteMany()
   ])
 }

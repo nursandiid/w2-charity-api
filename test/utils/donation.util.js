@@ -12,7 +12,7 @@ const createTestDonation = async (email, campaignTitle) => {
     data: {
       order_number: addLeadingZero(Math.floor(Math.random() * 999999)),
       anonim: false,
-      nominal: 1000000,
+      nominal: 1_000_000,
       support: '-',
       status: 'not_confirmed',
       users: {
@@ -60,7 +60,7 @@ const createDummyTestDonations = async (email, campaignTitle) => {
     donations.push({
       order_number: addLeadingZero(Math.floor(Math.random() * 999999)),
       anonim: false,
-      nominal: 1000000,
+      nominal: 1_000_000,
       support: '-',
       status: 'not_confirmed',
       campaign_id: campaign.id, // must directly, not with connect

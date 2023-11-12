@@ -1,14 +1,13 @@
 import express from 'express'
+import cashoutService from '../services/cashout.service.js'
 import validate from '../validations/validation.js'
 import {
-  donationCreateValidation,
-  donationUpdateValidation,
-  donationIdValidation,
-  donationFiltersValidation
-} from '../validations/donation.validate.js'
-import donationService from '../services/donation.service.js'
+  cashoutCreateValidation,
+  cashoutUpdateValidation,
+  cashoutIdValidation,
+  cashoutFiltersValidation
+} from '../validations/cashout.validate.js'
 import successResponse from '../responses/success.response.js'
-import ErrorMsg from '../errors/message.error.js'
 
 /**
  *
@@ -18,8 +17,8 @@ import ErrorMsg from '../errors/message.error.js'
  */
 const getAll = async (req, res, next) => {
   try {
-    const attributes = validate(donationFiltersValidation, req.query)
-    const result = await donationService.getAll(attributes)
+    const attributes = validate(cashoutFiltersValidation, req.query, true)
+    const result = await cashoutService.getAll(attributes)
 
     return successResponse(res, result)
   } catch (error) {
@@ -35,10 +34,10 @@ const getAll = async (req, res, next) => {
  */
 const create = async (req, res, next) => {
   try {
-    const attributes = validate(donationCreateValidation, req.body)
+    const attributes = validate(cashoutCreateValidation, req.body)
     attributes.user_id = req.user.id
-
-    const result = await donationService.create(attributes)
+    
+    const result = await cashoutService.create(attributes)
 
     return successResponse(res, result, 'Created', 201)
   } catch (error) {
@@ -54,8 +53,8 @@ const create = async (req, res, next) => {
  */
 const get = async (req, res, next) => {
   try {
-    const id = validate(donationIdValidation, req.params.id)
-    const result = await donationService.get(id)
+    const id = validate(cashoutIdValidation, req.params.id)
+    const result = await cashoutService.get(id)
 
     return successResponse(res, result)
   } catch (error) {
@@ -71,14 +70,9 @@ const get = async (req, res, next) => {
  */
 const update = async (req, res, next) => {
   try {
-    const id = validate(donationIdValidation, req.params.id)
-    const attributes = validate(donationUpdateValidation, req.body)
-
-    if (attributes.status === 'confirmed' && req.user.roles.name !== 'admin') {
-      throw new ErrorMsg(403, 'Only admin can update status to be confirmed')
-    }
-
-    const result = await donationService.update(id, attributes)
+    const id = validate(cashoutIdValidation, req.params.id)
+    const attributes = validate(cashoutUpdateValidation, req.body)
+    const result = await cashoutService.update(id, attributes)
 
     return successResponse(res, result, 'Updated')
   } catch (error) {
@@ -94,8 +88,8 @@ const update = async (req, res, next) => {
  */
 const remove = async (req, res, next) => {
   try {
-    const id = validate(donationIdValidation, req.params.id)
-    const result = await donationService.remove(id)
+    const id = validate(cashoutIdValidation, req.params.id)
+    const result = await cashoutService.remove(id)
 
     return successResponse(res, result, 'Deleted', 204)
   } catch (error) {

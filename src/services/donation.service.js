@@ -178,25 +178,39 @@ const update = async (id, attributes) => {
     throw new ErrorMsg(404, 'Donation not found')
   }
 
-  donation = await prisma.donations.update({
-    where: {
-      id,
-      campaign_id: campaign.id
-    },
-    data: {
-      status: attributes.status
-    },
-    include: {
-      campaigns: {
-        include: {
-          category_campaign: true
+  let nominalCollected = campaign.nominal
+  if (attributes.status === 'confirmed') {
+    nominalCollected += donation.nominal
+  }
+
+  const [donationUpdated] = await prisma.$transaction([
+    prisma.donations.update({
+      where: {
+        id,
+        campaign_id: campaign.id
+      },
+      data: {
+        status: attributes.status,
+        campaigns: {
+          update: {
+            data: {
+              nominal: nominalCollected
+            }
+          }
         }
       },
-      users: true
-    }
-  })
+      include: {
+        campaigns: {
+          include: {
+            category_campaign: true
+          }
+        },
+        users: true
+      }
+    })
+  ])
 
-  return donation
+  return donationUpdated
 }
 
 /**
