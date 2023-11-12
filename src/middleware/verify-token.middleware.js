@@ -1,7 +1,7 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import ErrorMsg from '../errors/message.error.js'
-import { getAuth } from '../services/auth.service.js'
+import prisma from '../applications/database.js'
 
 /**
  *
@@ -34,7 +34,19 @@ const verifyToken = async (req, res, next) => {
           throw new ErrorMsg(401, 'Unauthorized')
         }
 
-        req.user = await getAuth(decoded.user.id)
+        req.user = await prisma.users.findFirst({
+          where: {
+            id: decoded.user.id
+          },
+          include: {
+            roles: true
+          }
+        })
+        
+        if (!req.user) {
+          throw new ErrorMsg(401, 'Unauthorized')
+        }
+
         next()
       } catch (error) {
         next(error)

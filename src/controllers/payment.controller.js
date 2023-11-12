@@ -75,10 +75,6 @@ const update = async (req, res, next) => {
 
     const result = await paymentService.update(attributes, donationId)
 
-    if (attributes.path_image && fs.existsSync(user.path_image)) {
-      fs.unlinkSync(user.path_image)
-    }
-
     return successResponse(res, result, 'Updated')
   } catch (error) {
     next(error)

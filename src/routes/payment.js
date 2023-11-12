@@ -5,15 +5,14 @@ import verifyRole from '../middleware/verify-role.middleware.js'
 import { multer, storage } from '../applications/multer.js'
 
 const paymentRouter = express.Router()
-const upload = multer({ storage: storage('payment') })
+const imageUpload = multer({ storage: storage('payment') })
 
-// paymentRouter.use(verifyToken, verifyRole('donor'))
-paymentRouter.use(verifyToken)
+paymentRouter.use(verifyToken, verifyRole('donor', 'admin'))
 
 paymentRouter
   .route('/:donationId/payment')
-  .post(upload.single('path_image'), paymentController.create)
-  .put(upload.single('path_image'), paymentController.update)
+  .post(imageUpload.single('path_image'), paymentController.create)
+  .put(imageUpload.single('path_image'), paymentController.update)
   .get(paymentController.get)
 
 export default paymentRouter

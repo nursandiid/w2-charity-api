@@ -265,7 +265,7 @@ const update = async (id, attributes) => {
     attributes.publish_date = new Date(attributes.publish_date)
   }
 
-  const [, updatedCampaign] = await prisma.$transaction([
+  const [, campaignUpdated] = await prisma.$transaction([
     prisma.category_campaign.deleteMany({
       where: {
         campaign_id: campaign.id
@@ -305,7 +305,7 @@ const update = async (id, attributes) => {
     })
   ])
 
-  return updatedCampaign
+  return campaignUpdated
 }
 
 /**

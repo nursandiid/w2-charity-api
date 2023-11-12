@@ -1,6 +1,7 @@
 import prisma from '../applications/database.js'
 import ErrorMsg from '../errors/message.error.js'
 import { deleteSelectedProperties } from '../utils/helpers.js'
+import fs from 'fs'
 
 /**
  *
@@ -125,7 +126,7 @@ const update = async (attributes, donationId) => {
     'bank_id'
   ])
 
-  payment = await prisma.payments.update({
+  const paymentUpdated = await prisma.payments.update({
     where: {
       id: payment.id,
       order_number: donation.order_number
@@ -155,7 +156,11 @@ const update = async (attributes, donationId) => {
     }
   })
 
-  return payment
+  if (attributes.path_image && fs.existsSync(payment.path_image)) {
+    fs.unlinkSync(payment.path_image)
+  }
+
+  return paymentUpdated
 }
 
 export default { create, get, update }
