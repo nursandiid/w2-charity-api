@@ -14,6 +14,7 @@ import donationRouter from '../routes/donation.js'
 import paymentRouter from '../routes/payment.js'
 import settingRouter from '../routes/setting.js'
 import cashoutRouter from '../routes/cashout.js'
+import reportRouter from '../routes/report.js'
 
 const app = express()
 
@@ -40,6 +41,7 @@ app.use('/api/donations', donationRouter)
 app.use('/api/donations', paymentRouter)
 app.use('/api/settings', settingRouter)
 app.use('/api/cashouts', cashoutRouter)
+app.use('/api/reports', reportRouter)
 
 app.use(errorMiddleware)
 app.use(notFoundMiddleware)

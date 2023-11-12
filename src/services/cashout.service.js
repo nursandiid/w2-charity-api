@@ -121,12 +121,27 @@ const create = async (attributes) => {
   const cashout_amount = attributes.cashout_amount
   const cashout_fee = 5000
   const amount_received = cashout_amount - cashout_fee
-  const remaining_amount = campaign.nominal - cashout_amount
+  const remaining_amount = campaign.goal - (campaign.nominal + cashout_amount)
 
   if (remaining_amount < 0) {
     throw new ErrorMsg(
       400,
       'Cashout are already greater than campaign amount collected'
+    )
+  }
+
+  let cashoutIsPending = await prisma.cashouts.count({
+    where: {
+      campaign_id: campaign.id,
+      user_id: attributes.user_id,
+      status: 'pending'
+    }
+  })
+
+  if (cashoutIsPending > 0) {
+    throw new ErrorMsg(
+      400,
+      'Cashout already created, the status is still pending'
     )
   }
 

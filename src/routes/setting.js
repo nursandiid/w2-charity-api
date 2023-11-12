@@ -10,15 +10,17 @@ const fields = ['path_image', 'path_image_header', 'path_image_footer']
 
 settingRouter.use(verifyToken, verifyRole('admin'))
 
-settingRouter.get('/current', settingController.get).put(
-  '/current',
-  uploadImages.fields(
-    fields.map((name) => ({
-      name,
-      maxCount: 1
-    }))
-  ),
-  settingController.update
-)
+settingRouter
+  .route('/current')
+  .get(settingController.get)
+  .put(
+    uploadImages.fields(
+      fields.map((name) => ({
+        name,
+        maxCount: 1
+      }))
+    ),
+    settingController.update
+  )
 
 export default settingRouter
