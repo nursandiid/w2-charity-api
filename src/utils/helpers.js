@@ -1,3 +1,4 @@
+import moment from 'moment'
 import slug from 'slug'
 
 /**
@@ -100,10 +101,10 @@ export const strRandom = (length) => {
 }
 
 /**
- * 
- * @param {number} number 
- * @param {number} length 
- * @returns 
+ *
+ * @param {number} number
+ * @param {number} length
+ * @returns
  */
 export const addLeadingZero = (number, length) => {
   let str = String(number)
@@ -112,4 +113,37 @@ export const addLeadingZero = (number, length) => {
   str = str.padStart(length, '0')
 
   return str
+}
+
+/**
+ * convert date to Indonesian format
+ *
+ * @param {string|ISODate} date
+ * @returns {string}
+ */
+export const convertDateToIndonesianFormat = (date) => {
+  if (!date) {
+    return
+  }
+
+  const months = [
+    '',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ]
+  const year = moment(date).format('YYYY')
+  const month = months[Number(moment(date).format('M'))]
+  const newDate = moment(date).format('DD')
+
+  return `${newDate} ${month} ${year}`
 }

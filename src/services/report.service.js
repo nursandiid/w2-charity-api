@@ -4,6 +4,7 @@ import fs from 'fs'
 import { v4 as uuid } from 'uuid'
 import xlsx from 'node-xlsx'
 import PDFDocument from 'pdfkit-table'
+import { convertDateToIndonesianFormat } from '../utils/helpers.js'
 
 /**
  *
@@ -156,12 +157,13 @@ const exportPDF = async (attributes = []) => {
       align: 'center'
     })
 
-    doc.font('Helvetica').fontSize(16)
     doc
+      .font('Helvetica')
+      .fontSize(14)
       .text(
-        `Tanggal ${startDate.format('YYYY-MM-DD')} s/d ${endDate.format(
-          'YYYY-MM-DD'
-        )}`,
+        `Tanggal ${convertDateToIndonesianFormat(
+          startDate
+        )} s/d ${convertDateToIndonesianFormat(endDate)}`,
         {
           align: 'center'
         }
@@ -206,11 +208,10 @@ const exportExcel = async (attributes = []) => {
   data = [
     ['Laporan Penggalangan Dana'],
     [
-      `Tanggal ${startDate.format('YYYY-MM-DD')} s/d ${endDate.format(
-        'YYYY-MM-DD'
-      )}`
+      `Tanggal ${convertDateToIndonesianFormat(
+        startDate
+      )} s/d ${convertDateToIndonesianFormat(endDate)}`
     ],
-    [''],
     [''],
     ['No', 'Date', 'Income', 'Expense', 'Cash Balance'],
     ...data
