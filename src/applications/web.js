@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import corsOptions from '../applications/cors.js'
 import errorMiddleware from '../middleware/error.middleware.js'
 import notFoundMiddleware from '../middleware/not-found.middleware.js'
 import categoryRouter from '../routes/category.js'
@@ -18,7 +19,7 @@ import reportRouter from '../routes/report.js'
 
 const app = express()
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
