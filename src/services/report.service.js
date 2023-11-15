@@ -1,5 +1,9 @@
 import moment from 'moment'
 import prisma from '../applications/database.js'
+import fs from 'fs'
+import { v4 as uuid } from 'uuid'
+import xlsx from 'node-xlsx'
+import PDFDocument from 'pdfkit-table'
 
 /**
  *
@@ -130,9 +134,62 @@ const getAll = async (attributes = []) => {
  * @returns {array|object}
  */
 const exportPDF = async (attributes = []) => {
-  let { data, startDate, endDate } = await getAll(attributes)
+  const { data, startDate, endDate } = await getAll(attributes)
+  let tableData = data.map((item) => {
+    return [item.no, item.date, item.income, item.expense, item.cash_balance]
+  })
 
-  return data
+  const path = await new Promise(async (resolve, reject) => {
+    const doc = new PDFDocument({
+      size: 'a4',
+      margins: {
+        top: 72,
+        right: 72,
+        bottom: 72,
+        left: 72
+      }
+    })
+    const path = `storage/${uuid()}.pdf`
+    const stream = doc.pipe(fs.createWriteStream(path))
+
+    doc.font('Times-Bold').fontSize(20).text('Laporan Penggalangan Dana', {
+      align: 'center'
+    })
+
+    doc.font('Helvetica').fontSize(16)
+    doc
+      .text(
+        `Tanggal ${startDate.format('YYYY-MM-DD')} s/d ${endDate.format(
+          'YYYY-MM-DD'
+        )}`,
+        {
+          align: 'center'
+        }
+      )
+      .moveDown()
+
+    const table = {
+      headers: ['No', 'Date', 'Income', 'Expense', 'Cash Balance'],
+      rows: [...tableData]
+    }
+
+    doc.table(table, {
+      prepareHeader: () => doc.font('Helvetica').fontSize(12),
+      prepareRow: () => doc.font('Helvetica').fontSize(12)
+    })
+
+    doc.end()
+
+    stream.on('finish', () => {
+      resolve(path)
+    })
+
+    doc.on('error', (err) => {
+      reject(err)
+    })
+  })
+
+  return path
 }
 
 /**
@@ -154,11 +211,23 @@ const exportExcel = async (attributes = []) => {
       )}`
     ],
     [''],
-    [''][('no', 'date', 'income', 'expense', 'cash_balance')],
+    [''],
+    ['No', 'Date', 'Income', 'Expense', 'Cash Balance'],
     ...data
   ]
 
-  return data
+  const sheetOptions = {
+    '!cols': [{ wch: 10 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }]
+  }
+
+  const buffer = xlsx.build([{ name: 'Sheet0', data }], {
+    sheetOptions
+  })
+  const path = `storage/${uuid()}.xlsx`
+
+  fs.writeFileSync(path, buffer)
+
+  return path
 }
 
 export default { getAll, exportPDF, exportExcel }
