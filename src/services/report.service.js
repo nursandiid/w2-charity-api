@@ -13,9 +13,9 @@ import { convertDateToIndonesianFormat } from '../utils/helpers.js'
  */
 const getAll = async (attributes = []) => {
   const startDate = attributes.start_date
-    ? moment(attributes.start_date)
+    ? moment(attributes.start_date).subtract(1, 'days')
     : moment().subtract(1, 'months')
-  const endDate = attributes.last_date ? moment(attributes.last_date) : moment()
+  const endDate = attributes.end_date ? moment(attributes.end_date) : moment()
 
   let donation = await prisma.donations.groupBy({
     by: ['created_at'],
@@ -84,11 +84,14 @@ const getAll = async (attributes = []) => {
     }
   }))
 
+  let subtract = endDate.diff(startDate, 'days')
   let data = []
   let cashBalance = 0
-  let loopDate = moment().subtract(1, 'months')
+  let loopDate = attributes.end_date
+    ? moment(endDate).subtract(subtract, 'days')
+    : moment(endDate).subtract(1, 'month')
 
-  for (let i = 1; i <= endDate.diff(startDate, 'days'); i++) {
+  for (let i = 1; i <= subtract; i++) {
     loopDate.add(1, 'days')
 
     // let income = donation
@@ -126,6 +129,7 @@ const getAll = async (attributes = []) => {
     })
   }
 
+  console.log(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'))
   return { data, startDate, endDate }
 }
 
